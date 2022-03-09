@@ -27,7 +27,6 @@ export default {
   height: 100%;
   top: 0;
   z-index: 99999;
-  background: rgba(125,137,95,0.1);
   // 不可成为事件
   pointer-events: none;
   
