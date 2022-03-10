@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Rindex/>
     <canvas id="Snow"></canvas>
   </div>
 </template>
@@ -7,6 +8,7 @@
 <script>
 import setRequestAniamtionFram from './utils/setRequestAniamtionFram'
 import snow from './utils/snow'
+import Rindex from './views/Rindex'
 export default {
   name: "app",
   mounted() {
@@ -14,6 +16,9 @@ export default {
     setRequestAniamtionFram()  
     snow()
   },
+  components:{
+    Rindex
+  }
 };
 </script>
 
