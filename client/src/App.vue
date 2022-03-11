@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="app">
     <Rindex/>
     <canvas id="Snow"></canvas>
   </div>

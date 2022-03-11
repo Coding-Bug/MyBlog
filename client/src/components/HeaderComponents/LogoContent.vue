@@ -5,10 +5,8 @@
       <p v-show="$route.name !== 'home'">skyblede</p>
       <i @click="$router.push('/category')" class="search iconfont icon-sousuo"></i>
       </div>
-     
   </div>
 </template>
-
 <script>
 export default {
     name:'logo',
@@ -24,7 +22,6 @@ export default {
             this.$Bus.$emit('eventFromHeader',this.isShowNav)
         }
     }
-
 }
 </script>
 
@@ -45,12 +42,12 @@ export default {
            
         }
     }
-    
     // 页面小的时候显示搜索图标和菜单
     // 页面大的时候是显示搜索框
-    @media screen and (max-width:768px){
+    @media screen and(max-width:768px){
         .menu,
         .search{
+            color:black;
             display: block !important;
         }
     }
@@ -62,6 +59,8 @@ export default {
         cursor: pointer;
         color: #d4d4d4;
         display: none;
+        transition:all  1s linear ;
+        
     }
     .menu{
         left: 2rem;
