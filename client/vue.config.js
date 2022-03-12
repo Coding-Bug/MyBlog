@@ -1,10 +1,16 @@
+const path = require('path');
+function resolve(dir){
+    return path.join(__dirname,dir)//设置绝对路径
+
+}
 module.exports={
     devServer:{
         // 开发环境编译好直接打开
         open:true,
     },
-    configureWebpack:(config)=>{
-        // 调试JS
-        config.devtool="source-map"
-    }
+    //配置路径
+    chainWebpack: config => {
+        config.resolve.alias.set('@', resolve('src'))
+    },
+
 }

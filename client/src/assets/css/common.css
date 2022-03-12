@@ -17,8 +17,24 @@ input{
   outline: none;
 }
 
+.clearfix:before,
+.clearfix:after {
+    display: table;
+    content: "";
+}
+.clearfix:after {
+    clear: both
+}
+
+.lf{
+  float: left;
+}
+.rf{
+  float: right;
+}
+
 /* 媒体查询 */
-@media screen and (max-width: 1920px) {
+/* @media screen and (max-width: 1920px) {
   html {
     font-size: 19.2px;
   }
@@ -57,4 +73,4 @@ input{
   html {
     font-size: 6.8px;
   }
-}
+} */

@@ -10,6 +10,8 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "element-ui": "^2.15.1",
+    "moment": "^2.29.1",
+    "path": "^0.12.7",
     "source-map": "^0.7.3",
     "vue": "^2.6.11",
     "vue-router": "^3.5.2",

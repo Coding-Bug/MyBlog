@@ -13,6 +13,8 @@ import './assets/icon/icon.css'
 // 引入自定义字体
 import './assets/font/font.css'
 
+// 引入过滤器
+import './utils/filter'
 // 挂载事件总线
 Vue.prototype.$Bus=new Vue()
 //  引入element-ui
@@ -21,12 +23,20 @@ import{
   Col,
   Avatar,
   Message,
-  MessageBox
+  MessageBox,
+  Menu,
+  MenuItem,
+  Card,
+  Tag
 }from'element-ui'
 
 Vue.use(Row)
 Vue.use(Col)
 Vue.use(Avatar)
+Vue.use(Menu)
+Vue.use(MenuItem)
+Vue.use(Card)
+Vue.use(Tag)
 // 引入Mesage和MessageBox中提交信息和确定的box
 Vue.prototype.$message = Message
 Vue.prototype.$prompt = MessageBox.prompt

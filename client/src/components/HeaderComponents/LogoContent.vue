@@ -12,14 +12,14 @@ export default {
     name:'logo',
     data(){
         return {
-            isShowNav:false
+            isShowNav:true
         }
     },
     methods:{
         // 控制导航栏开关
         showNav(){
             this.isShowNav=!this.isShowNav
-            this.$Bus.$emit('eventFromHeader',this.isShowNav)
+            this.$Bus.$emit('navStateChange',this.isShowNav)
         }
     }
 }
@@ -55,7 +55,7 @@ export default {
     .menu,
     .search{
         position: absolute;
-        font-size: 3rem;
+        font-size: 1.5em;
         cursor: pointer;
         color: #d4d4d4;
         display: none;

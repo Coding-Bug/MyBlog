@@ -59,7 +59,7 @@ export default {
     flex-wrap: nowrap;
     .userbox{
         display: flex;
-        color: #252222c4;
+        color: #fdfbfb;
         float: right;
         .is-login{
             font-size: 14px;

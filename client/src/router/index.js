@@ -3,10 +3,15 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 const routes = [{
     path:'/',
-}]
+    redirect:'/article'
+},{
+    path:'/article',
+    name:'article',
+    component:()=>import('@/views/Article.vue')
+}
+]
 
 const router = new VueRouter({
-    mode:'history',
     routes
 })
 

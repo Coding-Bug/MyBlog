@@ -39,7 +39,7 @@ export default {
     z-index: 2000;
     margin: 0 auto;
     border-bottom: 1px solid #f3f3f3;
-    background-color: rgb(9 255 255 / 65%);
+    background-color: rgb(116 119 119 / 40%);
     .row{
         display: flex;
         justify-content: space-between;

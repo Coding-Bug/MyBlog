@@ -8,7 +8,7 @@ const state={
 const mutations={
     UPDATE_BGCOLOR(state){
         state.backgroundColor=!state.backgroundColor
-        state.backgroundColor?state.bgColor='rgba(43, 44, 40,0.6)':state.bgColor='rgba(242, 242, 242, 0.6)'
+        state.backgroundColor?state.bgColor='rgba(242, 242, 242, 0.6)':state.bgColor='rgba(43, 44, 40,0.6)'
     }
 }
 
