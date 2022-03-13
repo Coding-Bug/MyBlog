@@ -14,12 +14,12 @@ export default {
     data(){
         return{
             searchValue:'',
-            searchList:[]
         }
     },
     methods:{
-        search(){},
         emitToArticle(){
+            this.$Bus.$emit('eventFromSearch',this.searchValue) 
+            this.searchValue=''  
         }
     }
 }
