@@ -38,7 +38,9 @@ import{
   MenuItem,
   Card,
   Tag,
-  Pagination
+  Pagination,
+  Input,
+  Button
 }from'element-ui'
 
 Vue.use(Row)
@@ -49,6 +51,8 @@ Vue.use(MenuItem)
 Vue.use(Card)
 Vue.use(Tag)
 Vue.use(Pagination)
+Vue.use(Input)
+Vue.use(Button)
 // 引入Mesage和MessageBox中提交信息和确定的box
 Vue.prototype.$message = Message
 Vue.prototype.$prompt = MessageBox.prompt

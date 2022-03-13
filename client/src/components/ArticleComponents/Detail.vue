@@ -40,13 +40,17 @@
     </div>
 
     <!-- 评论区域 -->
-
+    <Guestbook></Guestbook>
   </div>
 </template>
 
 <script>
+import Guestbook from '../Guestbook/index.vue'
 export default {
   name: "Detail",
+  components:{
+       Guestbook,
+  },
   data() {
     return {
       // 文章对象
