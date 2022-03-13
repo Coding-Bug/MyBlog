@@ -21,6 +21,10 @@ import './utils/filter'
 import api from '@/api/index'
 Vue.prototype.$api = api
 
+// 引入mavon-editor
+import mavonEditor from 'mavon-editor'
+import 'mavon-editor/dist/css/index.css'
+Vue.use(mavonEditor)
 // 挂载事件总线
 Vue.prototype.$Bus=new Vue()
 //  引入element-ui

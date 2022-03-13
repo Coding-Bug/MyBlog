@@ -36,6 +36,7 @@ axios.interceptors.response.use(
     },
     error=>{  // 服务器不是2xx的情况
         return Promise.reject(error)
+        
        
     }
 )
