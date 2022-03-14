@@ -15,3 +15,19 @@ getArticle
  */
 
 export const getDetail = (article_id)=>get(`/article/getArticleByid`,{article_id})
+
+
+/**
+ * @method 根据文章评论
+ * @param {number} article_id   
+ * @param {number} page
+ * @param {number} pageSize
+ */
+export const getArticleMessage  = (params)=>get(`/article/getMessageById`,params)
+
+/**
+ * @method 评论或者留言
+ * @param {String} publishURL [请求路径]
+ * @param {Object} params [参数对象]
+ */
+export const publish = (publishURL,params)=>post(publishURL,params)

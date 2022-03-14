@@ -42,10 +42,15 @@ input {
   border-radius: 50%;
   margin-right: 15px;
   box-shadow: 0 0 5px #ccc;
+  cursor: pointer
 }
 .avatar img {
+
   width: 100%;
   height: 100%;
+}
+.click:hover{
+  color:#1E90FF ;
 }
 
 

@@ -2,8 +2,8 @@
 
 import axios from "axios";
 import { Message } from "element-ui";
-
-
+import store from '../store'
+import router from '../router'
 // 配置axios(进行全局配置)
 axios.defaults.baseURL = "http://127.0.0.1:4523/mock/697537";
 axios.defaults.withCredentials = true; // 跨域也发送cookie灯
@@ -29,13 +29,18 @@ axios.interceptors.response.use(
     response=>{
         if(response.status === 200){
             return Promise.resolve(response)
-        }else {  // 如果不是200,就返回错误的peimise
+        }else {  // 如果不是200,就返回错误的promise
             return Promise.reject(response)
         }
 
     },
     error=>{  // 服务器不是2xx的情况
-        return Promise.reject(error)
+        // 401则让用户重新登录，并删除token信息
+        if(error.response.status==401){
+            router.push('/login')
+            store.dispatch('user/removeToken')
+        }
+        return Promise.reject(error.response)
         
        
     }
@@ -55,7 +60,7 @@ export function get(url,params){
             resolve(res.data)
         })
         .catch(err=>{
-            reject(err.data)
+            reject(err.data.msg)
         })
     })
 }

@@ -37,7 +37,6 @@ export default {
         // 
     },
      mounted(){
-         console.log(mapGetters)
         // DOM挂载完获取获取用户信息
         if(localStorage.getItem('userInfo')){
             this.userInfo = JSON.parse(localStorage.getItem('userInfo'))
