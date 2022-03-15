@@ -8,7 +8,7 @@ import router from '../router'
 axios.defaults.baseURL = "http://127.0.0.1:4523/mock/697537";
 axios.defaults.withCredentials = true; // 跨域也发送cookie灯
 axios.defaults.crossDmain = true; // 允许跨域
-axios.defaults.timeout = 10000;
+axios.defaults.timeout = 4000;
 axios.defaults.headers.post["Content-Type"] =
   "application/x-www-form-urlencoded;charset=UTF-8";
 
@@ -40,6 +40,7 @@ axios.interceptors.response.use(
             router.push('/login')
             store.dispatch('user/removeToken')
         }
+        console.log(error.response)
         return Promise.reject(error.response)
         
        
@@ -60,7 +61,7 @@ export function get(url,params){
             resolve(res.data)
         })
         .catch(err=>{
-            reject(err.data.msg)
+            reject(err.data||"网络出错了(ノへ`、)")
         })
     })
 }

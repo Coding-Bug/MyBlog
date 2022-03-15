@@ -40,7 +40,7 @@
     </div>
 
     <!-- 评论区域 -->
-    <Guestbook></Guestbook>
+    <Guestbook :article_id="detail.article_id"></Guestbook>
   </div>
 </template>
 

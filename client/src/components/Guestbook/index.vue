@@ -159,12 +159,26 @@
         </div>
       </div>
     </div>
+    <div class="comment-footer">
+      <!-- 到底了 -->
+      <span
+        class="no-more-comment comment-footer-item"
+        v-show="page * pageSize >= count"
+      >
+        到底啦(๑￫ܫ￩)
+      </span>
+      <!-- 正在加载更多 -->
+      <span class="loding-more comment-footer-item" v-show="page * pageSize < count">
+        <i class="el-icon-loading"></i>
+        正在加载更多...
+      </span>
+    </div>
   </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
-import {addScollEvent,deleteScollEvent} from '@/utils/scrollMore'
+import { addScollEvent, deleteScollEvent } from "@/utils/scrollMore";
 export default {
   name: "GuestBook",
   props: {
@@ -199,20 +213,22 @@ export default {
       // 评论的页码及每页大小
       page: 1,
       pageSize: 5,
+      count: 0, // 总数
+ 
       // 评论
-      comments: [
-      ],
+      comments: [],
     };
   },
-  mounted(){
-   // 获取评论
-   this.getComments()
-   // 绑定滚动条到底部的事件
-   addScollEvent(
-     function(){
-       console.log('aaa')
-     }
-   )
+  mounted() {
+    // 获取评论
+    this.getComments();
+  },
+  activated() {
+    // 绑定滚动条到底部的事件
+    addScollEvent(this.handleScroll, 1000);
+  },
+  deactivated() {
+    deleteScollEvent(); // 失活时注销
   },
   computed: {
     // 发表地址
@@ -232,23 +248,41 @@ export default {
   methods: {
     // 获取评论或者留言
     async getComments() {
+
       this.params = {
         page: this.page,
         pageSize: this.pageSize,
       };
       try {
-        let res
-        if (this.isComment) {  // 获取评论
+        let res;
+        if (this.isComment) {
+          // 获取评论
           this.params.article_id = this.article_id;
-           res = await this.$api.getArticleMessage(this.getURL, this.params);
-        } else {   // 获取留言
-           res = await this.$api.getMessage(this.getURL, this.params);
+          res = await this.$api.getArticleMessage(this.getURL, this.params);
+        } else {
+          // 获取留言
+          res = await this.$api.getMessage(this.getURL, this.params);
         }
         // 加入到列表
-        this.comments.push(res.data)
+        this.comments.push(res.data);
+        this.count = res.count;
+        // 取消正在加载
+      this.showLoading = false;
       } catch (err) {
-        this.$message.error(err.msg)
+        // this.$message.error(err.msg||err)
+        console.log(err);
       }
+ 
+      
+    },
+    // 加载吓一页评论
+    handleScroll() {
+      console.log();
+      if (this.page * this.pageSize >= this.count) {
+        return;
+      }
+      this.page++;
+      this.getComments();
     },
 
     // 发布留言或者评论
@@ -268,11 +302,11 @@ export default {
           // 调用统一发布接口
           try {
             let res = await this.$api.publish(this.publishURL, this.params);
-        
+
             if (res.code == 200) {
               this.$message.success(res.msg);
               // 重新发送获取评论请求
-              this.getComments()
+              this.getComments();
             }
           } catch (err) {
             this.$message.error(err);
@@ -337,6 +371,7 @@ export default {
   .comment-container {
     width: 90%;
     margin: 1rem 1rem 0;
+    padding-bottom: 0.5rem;
     .commentItem {
       display: flex;
       /* 评论区除去头像部分 */
@@ -407,6 +442,11 @@ export default {
         }
       }
     }
+  }
+
+  /* 底部 */
+  .comment-footer {
+    text-align: center;
   }
 
   /* 输入框 */
