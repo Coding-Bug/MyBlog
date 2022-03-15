@@ -49,8 +49,15 @@ input {
   width: 100%;
   height: 100%;
 }
+.click{
+  user-select: none;
+}
 .click:hover{
   color:#1E90FF ;
+}
+
+.high_light{
+  color:#1E90FF
 }
 
 

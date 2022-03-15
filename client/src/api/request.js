@@ -40,7 +40,7 @@ axios.interceptors.response.use(
             router.push('/login')
             store.dispatch('user/removeToken')
         }
-        console.log(error.response)
+        
         return Promise.reject(error.response)
         
        

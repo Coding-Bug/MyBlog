@@ -6,7 +6,7 @@ const state={
     }, // 保存用户信息
     loginStatus:false,
     admin:'skyblade',// 管理员
-    token:'', 
+    token:'dsad', 
     
 }
 

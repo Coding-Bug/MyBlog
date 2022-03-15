@@ -2,7 +2,7 @@
 import {debounce} from "./debounce";
 // 为滚动到最低端添加事件
 let scollMore = function (fun) {
-  console.log('调用了')
+
   // 防止立即调用
   let scrollY = document.documentElement.scrollTop || document.body.scrollTop; // 滚动条在Y轴滚动距离
   let vh =

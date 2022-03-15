@@ -26,8 +26,15 @@ export const getDetail = (article_id)=>get(`/article/getArticleByid`,{article_id
 export const getArticleMessage  = (params)=>get(`/article/getMessageById`,params)
 
 /**
- * @method 评论或者留言
+ * @method 评论或者留言或者回复
  * @param {String} publishURL [请求路径]
  * @param {Object} params [参数对象]
  */
-export const publish = (publishURL,params)=>post(publishURL,params)
+export const publishOrReply = (publishURL,params)=>post(publishURL,params)
+
+/**
+ * @method 点赞
+ * @param {String} likeURL [路径]
+ * @param {Object} params [参数]
+ */
+export const likeMessage=(likeURL,params)=>post(likeURL,params)

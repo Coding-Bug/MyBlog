@@ -14,7 +14,7 @@
           v-model="value"
           maxlength="200"
           placeholder="把你想说的写下来吧^_~   (Enter换行,Ctrl+Enter发送)"
-          @keydown.enter.native="publish"
+          @keydown.enter.native="publishOrReply"
           :rows="3"
           type="textarea"
           resize="none"
@@ -47,9 +47,11 @@
 
               <!-- 点赞和回复 -->
               <div class="like-reply">
-                <span @click="like" class="click"
+                <span
+                  @click="like(item)"
+                  :class="{ click: true, high_light: haveLiked(item) }"
                   ><i class="icon-dianzan iconfont"></i
-                  ><span v-if="item.like && item.like != 0">{{
+                  ><span v-if="item.like && item.like > 0">{{
                     item.like
                   }}</span>
                   <span v-else>点赞</span></span
@@ -73,7 +75,7 @@
                 <el-input
                   v-model="value"
                   maxlength="200"
-                  @keydown.enter.native="publish"
+                  @keydown.enter.native="publishOrReply"
                   :rows="3"
                   type="textarea"
                   resize="none"
@@ -118,10 +120,12 @@
 
                   <!-- 点赞和回复 -->
                   <div class="like-reply">
-                    <span @click="like" class="click"
+                    <span
+                      @click="like(item,subItem)"
+                      :class="{ click: true, high_light: haveLiked(subItem) }"
                       ><i class="icon-dianzan iconfont"></i
-                      ><span v-if="subItem.like && item.like != 0">{{
-                        item.like
+                      ><span v-if="subItem.like && subItem.like > 0">{{
+                        subItem.like
                       }}</span>
                       <span v-else>点赞</span></span
                     >
@@ -143,7 +147,7 @@
                       v-model="value"
                       maxlength="200"
                       :placeholder="reply_placeholder"
-                      @keydown.enter.native="publish"
+                      @keydown.enter.native="publishOrReply"
                       :rows="3"
                       type="textarea"
                       resize="none"
@@ -168,7 +172,10 @@
         到底啦(๑￫ܫ￩)
       </span>
       <!-- 正在加载更多 -->
-      <span class="loding-more comment-footer-item" v-show="page * pageSize < count">
+      <span
+        class="loding-more comment-footer-item"
+        v-show="page * pageSize < count"
+      >
         <i class="el-icon-loading"></i>
         正在加载更多...
       </span>
@@ -214,7 +221,7 @@ export default {
       page: 1,
       pageSize: 5,
       count: 0, // 总数
- 
+
       // 评论
       comments: [],
     };
@@ -229,26 +236,33 @@ export default {
   },
   deactivated() {
     deleteScollEvent(); // 失活时注销
+    this.comments = [];
   },
   computed: {
     // 发表地址
     publishURL() {
       return this.isComment ? "/article/leaveMessage" : "/message/leaveMessage";
     },
-    // 回复地址
-    replyURL() {
-      return this.isComment ? "/article/reply" : "/message/reply";
-    },
     // 获取地址
     getURL() {
       return this.isComment ? "/article/getMessage" : "/message/getMessage";
     },
+    // 点赞地址
+    likeURL() {
+      return this.isComment ? "/article/likeMessage" : "/message/likeMessage";
+    },
     ...mapGetters("user", ["userInfo", "token"]),
+  },
+  watch: {
+    article_id() {
+      this.page = 1;
+
+      this.getComments();
+    },
   },
   methods: {
     // 获取评论或者留言
     async getComments() {
-
       this.params = {
         page: this.page,
         pageSize: this.pageSize,
@@ -267,13 +281,11 @@ export default {
         this.comments.push(res.data);
         this.count = res.count;
         // 取消正在加载
-      this.showLoading = false;
+        this.showLoading = false;
       } catch (err) {
         // this.$message.error(err.msg||err)
         console.log(err);
       }
- 
-      
     },
     // 加载吓一页评论
     handleScroll() {
@@ -285,8 +297,8 @@ export default {
       this.getComments();
     },
 
-    // 发布留言或者评论
-    async publish(e) {
+    // 发布留言或者评论以及回复
+    async publishOrReply(e, reply_id) {
       // 注意监听的是keydwom事件。如果监听keyUp,那么发送的时候换行也有了
       if (e.ctrlKey && e.keyCode == 13) {
         // 判断有没有token
@@ -299,9 +311,15 @@ export default {
           if (this.isComment) {
             this.params.article_id = this.article_id;
           }
+          if (reply_id) {
+            this.params.reply_id = reply_id;
+          }
           // 调用统一发布接口
           try {
-            let res = await this.$api.publish(this.publishURL, this.params);
+            let res = await this.$api.publishOrReply(
+              this.publishURL,
+              this.params
+            );
 
             if (res.code == 200) {
               this.$message.success(res.msg);
@@ -318,8 +336,6 @@ export default {
       }
     },
 
-    // 回复
-    async reply(e) {},
     // 打开回复
     open(comment, subComment) {
       // 先重置回复
@@ -344,7 +360,58 @@ export default {
       this.show.subComment_id = "";
     },
     // 点赞
-    like() {},
+    async like(message, reply) {
+      // 判断有没有token
+      if (this.token) {
+        this.params = {
+          token: this.token,
+          message_id:message.message_id
+        };
+        // 如果是点赞回复
+        if (reply) {
+          this.params.reply_id = reply.reply_id;
+        }
+        // 调用统一点赞接口
+        try {
+          let res = await this.$api.likeMessage(this.likeURL, this.params);
+          if (res.code == 200) {
+            // 重置该评论点赞
+            this.resetLike(message,res.flag,reply)
+          }
+        } catch (err) {
+          this.$message.error(err);
+        }
+      } else {
+        this.$router.push("/login");
+        this.$message.error("请先登录(ノへ￣、)");
+      }
+    },
+    // 判断是否已经点赞
+    haveLiked(item) {
+      if (item.like_userid.indexOf(this.userInfo.id) == -1) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    // 重置某个点赞
+    resetLike(message, flag, reply) {
+      console.log(message,reply)
+      let obj
+      if(reply){
+         obj = reply
+      }else{
+        obj = message
+      }
+      if(flag){
+        obj.like++ // 点赞数减一
+        obj.like_userid.push(this.userInfo.id)          // 将用户添加倒点赞列表
+      }else{
+        obj.like--
+        obj.like_userid.splice(obj.like_userid.indexOf(this.userInfo.id),1)
+      }
+
+    },
   },
 };
 </script>
