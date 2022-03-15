@@ -6,4 +6,11 @@ import moment from 'moment'
       let date = new Date(parseInt(time))
       return moment(date).format('YYYY-MM-DD HH:mm')
   })
+  Vue.filter('noMoreThen999',(num)=>{
+    if(num>999){
+      return '999+'
+    }else{
+      return num
+    }
+  })
 }())

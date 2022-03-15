@@ -13,7 +13,7 @@ export default {
 <style lang="scss">
 #RAside{
     width: 200px;
-    height: 200px;
+    height: 800px;
     font-size: 17px;
     margin-top: 50px;
     background-color: rgba(116, 119, 119, 0.4);

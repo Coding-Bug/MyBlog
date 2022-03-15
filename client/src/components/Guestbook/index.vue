@@ -18,6 +18,7 @@
           :rows="3"
           type="textarea"
           resize="none"
+          ref="messageInput"
         >
         </el-input>
       </div>
@@ -121,7 +122,7 @@
                   <!-- 点赞和回复 -->
                   <div class="like-reply">
                     <span
-                      @click="like(item,subItem)"
+                      @click="like(item, subItem)"
                       :class="{ click: true, high_light: haveLiked(subItem) }"
                       ><i class="icon-dianzan iconfont"></i
                       ><span v-if="subItem.like && subItem.like > 0">{{
@@ -167,14 +168,14 @@
       <!-- 到底了 -->
       <span
         class="no-more-comment comment-footer-item"
-        v-show="page * pageSize >= count"
+        v-show="showFoot"
       >
         到底啦(๑￫ܫ￩)
       </span>
       <!-- 正在加载更多 -->
       <span
         class="loding-more comment-footer-item"
-        v-show="page * pageSize < count"
+        v-show="!showFoot"
       >
         <i class="el-icon-loading"></i>
         正在加载更多...
@@ -227,12 +228,16 @@ export default {
     };
   },
   mounted() {
-    // 获取评论
     this.getComments();
+    // 绑定聚焦搜索框事件
+    this.$Bus.$on('focusComment',()=>{
+         this.$refs.messageInput.focus()
+    })
   },
+
   activated() {
     // 绑定滚动条到底部的事件
-    addScollEvent(this.handleScroll, 1000);
+    addScollEvent(this.handleScroll,1000);
   },
   deactivated() {
     deleteScollEvent(); // 失活时注销
@@ -281,15 +286,16 @@ export default {
         this.comments.push(res.data);
         this.count = res.count;
         // 取消正在加载
-        this.showLoading = false;
+        if(this.page*this.pageSize>=this.count){
+          setTimeout(this.showFoot=true)
+        }
       } catch (err) {
         // this.$message.error(err.msg||err)
-        console.log(err);
       }
     },
     // 加载吓一页评论
     handleScroll() {
-      console.log();
+      console.log('aaa')
       if (this.page * this.pageSize >= this.count) {
         return;
       }
@@ -365,7 +371,7 @@ export default {
       if (this.token) {
         this.params = {
           token: this.token,
-          message_id:message.message_id
+          message_id: message.message_id,
         };
         // 如果是点赞回复
         if (reply) {
@@ -376,7 +382,7 @@ export default {
           let res = await this.$api.likeMessage(this.likeURL, this.params);
           if (res.code == 200) {
             // 重置该评论点赞
-            this.resetLike(message,res.flag,reply)
+            this.resetLike(message, res.flag, reply);
           }
         } catch (err) {
           this.$message.error(err);
@@ -396,21 +402,20 @@ export default {
     },
     // 重置某个点赞
     resetLike(message, flag, reply) {
-      console.log(message,reply)
-      let obj
-      if(reply){
-         obj = reply
-      }else{
-        obj = message
+      console.log(message, reply);
+      let obj;
+      if (reply) {
+        obj = reply;
+      } else {
+        obj = message;
       }
-      if(flag){
-        obj.like++ // 点赞数减一
-        obj.like_userid.push(this.userInfo.id)          // 将用户添加倒点赞列表
-      }else{
-        obj.like--
-        obj.like_userid.splice(obj.like_userid.indexOf(this.userInfo.id),1)
+      if (flag) {
+        obj.like++; // 点赞数减一
+        obj.like_userid.push(this.userInfo.id); // 将用户添加倒点赞列表
+      } else {
+        obj.like--;
+        obj.like_userid.splice(obj.like_userid.indexOf(this.userInfo.id), 1);
       }
-
     },
   },
 };
