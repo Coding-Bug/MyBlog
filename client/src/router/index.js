@@ -28,6 +28,11 @@ const routes = [{
     path:'/tag',
     name:'tag',
     component:()=>import('@/views/Tag')
+},
+{
+path:'/message',
+name:'message',
+component:()=>import('@/views/Message')
 }
 ]
 

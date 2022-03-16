@@ -34,11 +34,12 @@ export const getTag = ()=>get(`/article/getTag`)
 
 /**
  * @method 根据文章评论
+ * @param {String} URL
  * @param {number} article_id   
  * @param {number} page
  * @param {number} pageSize
  */
-export const getArticleMessage  = (params)=>get(`/article/getMessageById`,params)
+export const getMessage  = (URL,params)=>get(URL,params)
 
 /**
  * @method 评论或者留言或者回复

@@ -69,8 +69,8 @@
                 <span>其他</span>
               </div>
 
-              <el-menu-item index="5" @click="$router.push('/message')">
-                <i class="el-icon-chat-dot-round"></i>
+              <el-menu-item index="5" @click="$router.push('/message')" :class="{ high_light: $route.path == '/message' }">
+                <i class="el-icon-chat-dot-round" :class="{ high_light: $route.path == '/message' }"></i>
                 <span slot="title">留言</span>
               </el-menu-item>
               <el-menu-item index="6" @click="$router.push('/profile')">

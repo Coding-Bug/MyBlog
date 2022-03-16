@@ -58,7 +58,6 @@ export default {
     bgColor() {
       return this.$store.state.page.bgColor;
     },
-    
   },
   
   watch:{

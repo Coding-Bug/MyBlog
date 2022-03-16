@@ -30,7 +30,7 @@ export default {
                 let res = await this.$api.getCategory()
                 this.categoryList=res.data
             }catch(err){
-                this.$message.error('网络出错了,(ノへ￣、)！')
+                this.$message.error(err)
             }
         },
         // 跳转

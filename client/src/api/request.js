@@ -40,10 +40,7 @@ axios.interceptors.response.use(
             router.push('/login')
             store.dispatch('user/removeToken')
         }
-        
         return Promise.reject(error.response)
-        
-       
     }
 )
 
@@ -61,7 +58,7 @@ export function get(url,params){
             resolve(res.data)
         })
         .catch(err=>{
-            reject(err.data||"网络出错了(ノへ`、)")
+            reject(err.msg||"网络出错了(ノへ`、)")
         })
     })
 }

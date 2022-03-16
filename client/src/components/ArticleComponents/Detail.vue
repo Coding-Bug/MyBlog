@@ -97,8 +97,8 @@ export default {
         if (res.code == 200) {
           this.detail = res.data;
         }
-      } catch (e) {
-        this.$message.error("网络出错了,(ノへ￣、)！");
+      } catch (err) {
+        this.$message.err;
       }
     },
     // 点赞

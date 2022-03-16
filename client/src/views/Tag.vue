@@ -5,7 +5,7 @@
         class="tag_card"
         v-for="item in tagList"
         :key="item.tag_id"
-        :style="{ color: getColor(item), 'font-size': getSize(item) }"
+        :style="{ color: getColor(item), 'font-size': getSize(item),'border-bottom':`1px solid ${getColor(item)}` }"
         @click="goToArticle(item.tag_name)"
       >
         {{ item.tag_name }}
@@ -23,19 +23,19 @@ export default {
       type: [
         {
           color: "magenta",
-          size: "2rem",
+          size: "1.9rem",
         },
         {
           color: "#1E90FF",
-          size: "1.7rem",
+          size: "1.5rem",
         },
         {
           color: "#00ffffb3",
-          size: "1.4rem",
+          size: "1.2rem",
         },
         {
           color: "#aaadb0",
-          size: "1rem",
+          size: ".8rem",
         },
       ],
       //标签
@@ -102,7 +102,8 @@ export default {
       display: inline-block;
       user-select: none;
       cursor: pointer;
-      padding: .5rem 1rem;
+      margin:.5rem 1rem ;
+      padding-bottom: .3rem;
       &:hover {
         transform: translate(-0.1rem, -0.1rem);
       }

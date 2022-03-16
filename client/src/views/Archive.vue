@@ -46,7 +46,7 @@ this.getArchive()
         this.count = res.count
         this. archiveList= res.data
       } catch (err) {
-        this.$message.error("网络出错了,(ノへ￣、)！");
+        this.$message.error(err);
       }
     },
   },

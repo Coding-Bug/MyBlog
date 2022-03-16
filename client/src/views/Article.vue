@@ -226,8 +226,8 @@ export default {
         this.count = res.count;
         // 结束文章正在加载状态
         // this.$store.dispach('')
-      } catch (e) {
-        this.$message.error("网络出错了,(ノへ￣、)！");
+      } catch (err) {
+        this.$message.error(err);
         // 结束文章正在加载状态
         // this.$store.dispach('')
       }

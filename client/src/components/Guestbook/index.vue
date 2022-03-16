@@ -264,7 +264,6 @@ export default {
   watch: {
     article_id() {
       this.page = 1;
-
       this.getComments();
     },
   },
@@ -280,7 +279,7 @@ export default {
         if (this.isComment) {
           // 获取评论
           this.params.article_id = this.article_id;
-          res = await this.$api.getArticleMessage(this.getURL, this.params);
+          res = await this.$api.getMessage(this.getURL, this.params);
         } else {
           // 获取留言
           res = await this.$api.getMessage(this.getURL, this.params);
@@ -293,7 +292,8 @@ export default {
           setTimeout(this.showFoot=true)
         }
       } catch (err) {
-        // this.$message.error(err.msg||err)
+          this.$message.error(err)
+          setTimeout(this.showFoot=true)
       }
     },
     // 加载吓一页评论
