@@ -40,7 +40,9 @@ import{
   Tag,
   Pagination,
   Input,
-  Button
+  Button,
+  Timeline,
+  TimelineItem,
 }from'element-ui'
 
 Vue.use(Row)
@@ -53,6 +55,8 @@ Vue.use(Tag)
 Vue.use(Pagination)
 Vue.use(Input)
 Vue.use(Button)
+Vue.use(Timeline)
+Vue.use(TimelineItem)
 // 引入Mesage和MessageBox中提交信息和确定的box
 Vue.prototype.$message = Message
 Vue.prototype.$prompt = MessageBox.prompt

@@ -16,6 +16,11 @@ getArticle
 
 export const getDetail = (article_id)=>get(`/article/getArticleByid`,{article_id})
 
+/** 
+ * @method 获取归档
+*/
+export const getArchive=()=>get(`/article/getArchive`)
+
 
 /**
  * @method 根据文章评论

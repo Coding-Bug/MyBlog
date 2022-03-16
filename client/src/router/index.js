@@ -13,6 +13,11 @@ const routes = [{
     path:'/detail/:id',
     name:'detail',
     component:()=>import('@/components/ArticleComponents/Detail')
+},
+{
+    path:'/archive',
+    name:'archive',
+    component:()=>import('@/views/Archive')
 }
 ]
 
