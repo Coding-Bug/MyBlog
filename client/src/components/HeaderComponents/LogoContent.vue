@@ -3,6 +3,7 @@
       <div class="logo_name">
       <i class="menu iconfont icon-caidan" @click="showNav" ></i>
       <p v-show="$route.name !== 'home'">skyblede</p>
+      <!-- 宅屏幕不能搜索，只能到分类页 -->
       <i @click="$router.push('/category')" class="search iconfont icon-sousuo"></i>
       </div>
   </div>

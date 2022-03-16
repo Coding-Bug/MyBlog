@@ -57,7 +57,11 @@ input {
 }
 
 .high_light{
-  color:#1E90FF
+  color:#1E90FF !important;
+}
+/* 文章有关的用到卡片的内容 */
+.card{
+  background-color: #ffffff99;
 }
 
 

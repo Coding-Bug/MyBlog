@@ -225,6 +225,9 @@ export default {
 
       // 评论
       comments: [],
+
+      // 是否打开到底了
+      showFoot:false
     };
   },
   mounted() {

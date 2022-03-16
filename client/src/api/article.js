@@ -21,6 +21,16 @@ export const getDetail = (article_id)=>get(`/article/getArticleByid`,{article_id
 */
 export const getArchive=()=>get(`/article/getArchive`)
 
+/**
+ * @method 获取分类
+ */
+
+ export const getCategory = ()=>get(`/article/getCategory`)
+
+ /** 
+  * @method 获取标签
+ */
+export const getTag = ()=>get(`/article/getTag`)
 
 /**
  * @method 根据文章评论
@@ -50,3 +60,4 @@ export const likeMessage=(likeURL,params)=>post(likeURL,params)
  * @param {Object} params [参数]
  */
 export const likeArticle =(params)=>post('/article/likeArticle',params)
+

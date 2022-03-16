@@ -4,7 +4,9 @@ const state={
     // 背景颜色
     bgColor:'rgba(242, 242, 242, 0.6)',
     // 字体颜色
-    fontColor:'#333'
+    fontColor:'#333',
+    // 卡片颜色
+    cardColor:'rgba($color: #f2f2f2, $alpha: 0.7)'
 }
 
 const mutations={

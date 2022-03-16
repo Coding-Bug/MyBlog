@@ -156,13 +156,29 @@ export default {
       ],
     };
   },
+  watch: {
+    // 判断
+    $route() {
+      if (this.$route.params.cat_name) {
+        this.initParams();
+        this.params.category = this.$route.params.cat_name;
+        this.isCategory = true;
+        this.getList();
+      } else if (this.$route.params.tag_name) {
+        this.initParams();
+        this.params.tag = this.$route.params.tag_name;
+        this.isTag = true;
+        this.getList();
+      }
+    },
+  },
   mounted() {
     // 加载完毕的时候
     this.getList();
   },
   beforeUpdate() {
-    // 绑定从所搜组件传过来的事件
     const self = this;
+    // 绑定从所搜组件传过来的事件
     this.$Bus.$on("eventFromSearch", function (val) {
       self.initParams();
       self.params.search = val;

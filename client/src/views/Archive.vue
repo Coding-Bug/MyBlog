@@ -14,7 +14,7 @@
           color="#b5cbe0"
         >
           <el-card
-            class="title_container"
+            class="card title_container"
             @click.native="$router.push(`/detail/${item.article_id}`)"
             ><h4>{{ item.title }}</h4></el-card
           >
@@ -62,7 +62,6 @@ this.getArchive()
   }
   .title_container {
     font-size: 1.2rem;
-    background-color: #ffffff99;
     cursor: pointer;
     user-select: none;
     &:hover {
