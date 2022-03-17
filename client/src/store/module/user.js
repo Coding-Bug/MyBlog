@@ -1,7 +1,6 @@
 const state={
     userInfo:{
-        id:1,
-        name:'小明',
+        username:'小明',
         avatar:'.'
     }, // 保存用户信息
     loginStatus:false,
@@ -19,19 +18,32 @@ const mutations={
     },
     REMOVE_TOKEN(state){
         state.token=''
+    },
+    SET_TOKEN(state){
+        
     }
 }
 
 const actions={
     saveUser({commit,state},userInfo){
+        // 第二个参数是字符串,要转化一下
+        window.localStorage.setItem('userInfo',JSON.stringify(userInfo))
         commit('SAVE_USER',userInfo)
     },
     setLoginStatus({commit,state},loginStatus){
         commit('SET_LOGINSTATUS',loginStatus)
+        window.localStorage.setItem('loginStatus',loginStatus)
+        if(!loginStatus){
+            this.removeToken()
+        }
     },
     removeToken({commit,state}){
-        localStorage.removeItem('token')
+        window.localStorage.removeItem('token')
         commit('REMOVE_TOKEN')
+    },
+    setToken({commit,state},token){
+        window.localStorage.setItem('token',token)
+        commit('SET_TOKEN',token)
     }
 }
 

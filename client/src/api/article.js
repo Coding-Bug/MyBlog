@@ -33,11 +33,9 @@ export const getArchive=()=>get(`/article/getArchive`)
 export const getTag = ()=>get(`/article/getTag`)
 
 /**
- * @method 根据文章评论
+ * @method 根据评论或者留言
  * @param {String} URL
- * @param {number} article_id   
- * @param {number} page
- * @param {number} pageSize
+ * @param {Object} params 
  */
 export const getMessage  = (URL,params)=>get(URL,params)
 

@@ -18,7 +18,7 @@
 import Search from '../ArticleComponents/Search.vue'
 import {mapGetters} from 'vuex'
 export default {
-    name:'tablik',
+    name:'Tablik',
     components:{
        Search
     },
