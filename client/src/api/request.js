@@ -76,7 +76,7 @@ export function post(url,data){
             resolve(res.data)
         })
         .catch(err => {
-            reject(err.data)
+            reject(err.msg||"网络出错了(ノへ`、)")
         })
     })
 
