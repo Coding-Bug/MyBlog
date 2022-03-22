@@ -51,6 +51,7 @@ input {
 }
 .click{
   user-select: none;
+  cursor: pointer;
 }
 .click:hover{
   color:#1E90FF ;

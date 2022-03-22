@@ -1,26 +1,26 @@
 const state={
-    userInfo:{
-        username:'小明',
-        avatar:'.'
-    }, // 保存用户信息
+    userInfo:"",
     loginStatus:false,
     admin:'skyblade',// 管理员
-    token:'dsad', 
+    token:null, 
     
 }
 
 const mutations={
     SAVE_USER(state,userInfo){
-        state.user=userInfo
+        state.userInfo=userInfo
     },
     SET_LOGINSTATUS(state,loginStatus){
         state.loginStatus = loginStatus
     },
     REMOVE_TOKEN(state){
-        state.token=''
+        state.token=null
     },
-    SET_TOKEN(state){
-        
+    SET_TOKEN(state,token){
+        state.token=token
+    },
+    REMOVE_USER(state){
+       state.userInfo=null
     }
 }
 
@@ -34,7 +34,8 @@ const actions={
         commit('SET_LOGINSTATUS',loginStatus)
         window.localStorage.setItem('loginStatus',loginStatus)
         if(!loginStatus){
-            this.removeToken()
+            this.dispatch('user/removeToken')
+            this.dispatch('user/removeUser')
         }
     },
     removeToken({commit,state}){
@@ -44,7 +45,11 @@ const actions={
     setToken({commit,state},token){
         window.localStorage.setItem('token',token)
         commit('SET_TOKEN',token)
-    }
+    },
+    removeUser({commit,state}){
+        window.localStorage.removeItem('userInfo')
+        commit('REMOVE_USER')
+    },
 }
 
 const getters ={

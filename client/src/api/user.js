@@ -27,3 +27,23 @@ export const userRegister =(userInfo)=>post('/users/register',userInfo)
  * @param {Object} userInfo
  */
 export const userResetPassword = (userInfo)=>post('/users/resetPassword',userInfo)
+
+/**
+ * @method 退出登录
+ * @param {Object} params   [token]
+ */
+export const userLogout  = (params)=>post('/users/logout',params)
+
+/**
+ * @method 获取用户信息
+ * @param {Object} params [内置token]
+ */
+
+export const getUserInfo  = (params)=>post('/users/getInfo',params)
+
+/**
+ * @method 更新用户信息
+ * @param {Object} params 用户信息以及token
+ */
+
+export const changeUserInfo=(params)=>post('/users/changeInfo',params)

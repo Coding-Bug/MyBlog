@@ -5,17 +5,21 @@ import { Message } from "element-ui";
 import store from '../store'
 import router from '../router'
 // 配置axios(进行全局配置)
-axios.defaults.baseURL = "http://127.0.0.1:4523/mock/697537";
-axios.defaults.withCredentials = true; // 跨域也发送cookie灯
+// axios.defaults.baseURL = "http://127.0.0.1:4523/mock/697537";
+axios.defaults.baseURL = "http://127.0.0.1:9000";
+// axios.defaults.withCredentials = true; // 跨域也发送cookie
 axios.defaults.crossDmain = true; // 允许跨域
 axios.defaults.timeout = 4000;
-axios.defaults.headers.post["Content-Type"] =
-  "application/x-www-form-urlencoded;charset=UTF-8";
+axios.defaults.headers.post["Content-Type"] ="application/x-www-form-urlencoded;charset=UTF-8";
 
 // 请求拦截器
 axios.interceptors.request.use(
   (config) => {
     // 判断token,加上token，一次把所有的都加上
+    let token = store.getters["user/token"]
+    if(token){
+        config.headers.accessToken = token
+    }
     return config;
   },
   error => {
@@ -40,6 +44,7 @@ axios.interceptors.response.use(
             router.push('/login')
             store.dispatch('user/removeToken')
         }
+        
         return Promise.reject(error.response)
     }
 )
@@ -58,7 +63,7 @@ export function get(url,params){
             resolve(res.data)
         })
         .catch(err=>{
-            reject(err.msg||"网络出错了(ノへ`、)")
+            reject(err.data.msg||"网络出错了(ノへ`、)")
         })
     })
 }
@@ -76,7 +81,7 @@ export function post(url,data){
             resolve(res.data)
         })
         .catch(err => {
-            reject(err.msg||"网络出错了(ノへ`、)")
+            reject(err.data.msg||"网络出错了(ノへ`、)")
         })
     })
 

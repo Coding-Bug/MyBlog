@@ -7,6 +7,7 @@ module.exports={
     devServer:{
         // 开发环境编译好直接打开
         open:true,
+        port:9000
     },
     //配置路径
     chainWebpack: config => {

@@ -20,48 +20,26 @@
               class="e-menu-vertical-demo"
               text-colot="#cbced4"
               active-text-color="#1E90FF"
+              :default-active="routePath"
             >
               <div class="navTitle">
                 <span>导航</span>
               </div>
-              <el-menu-item
-                index="1"
-                @click="$router.push('/article')"
-                :class="{ high_light: $route.path == '/article' }"
-              >
-                <i
-                  class="el-icon-s-home"
-                  :class="{ high_light: $route.path == '/article' }"
-                ></i>
+              <el-menu-item index="1" @click="$router.push('/article')">
+                <i class="el-icon-s-home"></i>
                 <span slot="title">首页</span>
               </el-menu-item>
 
-              <el-menu-item
-                index="2"
-                @click="$router.push('/archive')"
-                :class="{ high_light: $route.path == '/archive' }"
-              >
-                <i
-                  class="el-icon-s-order"
-                  :class="{ high_light: $route.path == '/archive' }"
-                ></i>
+              <el-menu-item index="2" @click="$router.push('/archive')">
+                <i class="el-icon-s-order"></i>
                 <span slot="title">归档</span>
               </el-menu-item>
-              <el-menu-item
-                index="3"
-                @click="$router.push('/category')"
-                :class="{ high_light: $route.path == '/category' }"
-              >
-                <i
-                  class="el-icon-menu"
-                  :class="{ high_light: $route.path == '/category' }"
-                ></i>
+              <el-menu-item index="3" @click="$router.push('/category')">
+                <i class="el-icon-menu"></i>
                 <span slot="title">分类</span>
               </el-menu-item>
-              <el-menu-item index="4" @click="$router.push('/tag')"
-              :class="{ high_light: $route.path == '/tag' }">
-                <i class="el-icon-price-tag"
-                :class="{ high_light: $route.path == '/tag' }"></i>
+              <el-menu-item index="4" @click="$router.push('/tag')">
+                <i class="el-icon-price-tag"></i>
                 <span slot="title">标签</span>
               </el-menu-item>
 
@@ -69,8 +47,8 @@
                 <span>其他</span>
               </div>
 
-              <el-menu-item index="5" @click="$router.push('/message')" :class="{ high_light: $route.path == '/message' }">
-                <i class="el-icon-chat-dot-round" :class="{ high_light: $route.path == '/message' }"></i>
+              <el-menu-item index="5" @click="$router.push('/message')">
+                <i class="el-icon-chat-dot-round"></i>
                 <span slot="title">留言</span>
               </el-menu-item>
               <el-menu-item index="6" @click="$router.push('/profile')">
@@ -94,6 +72,30 @@ export default {
   name: "LAside",
   methods: {
     goAdmin() {},
+  },
+  data() {
+    return {
+      routePath: "0",
+      indexContent: [
+        "article",
+        "archive",
+        "category",
+        "tag",
+        "message",
+        "profile",
+      ],
+    };
+  },
+  watch: {
+    $route() {
+      let path = this.$route.path;
+      for (let i = 0; i < this.indexContent.length; ++i) {
+        if (path.indexOf(this.indexContent[i]) != -1) {
+          this.routePath = `${i + 1}`;
+          break;
+        }
+      }
+    },
   },
 };
 </script>

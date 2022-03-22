@@ -166,17 +166,11 @@
     </div>
     <div class="comment-footer">
       <!-- 到底了 -->
-      <span
-        class="no-more-comment comment-footer-item"
-        v-show="showFoot"
-      >
+      <span class="no-more-comment comment-footer-item" v-show="showFoot">
         到底啦(๑￫ܫ￩)
       </span>
       <!-- 正在加载更多 -->
-      <span
-        class="loding-more comment-footer-item"
-        v-show="!showFoot"
-      >
+      <span class="loding-more comment-footer-item" v-show="!showFoot">
         <i class="el-icon-loading"></i>
         正在加载更多...
       </span>
@@ -227,20 +221,20 @@ export default {
       comments: [],
 
       // 是否打开到底了
-      showFoot:false
+      showFoot: false,
     };
   },
   mounted() {
     this.getComments();
     // 绑定聚焦搜索框事件
-    this.$Bus.$on('focusComment',()=>{
-         this.$refs.messageInput.focus()
-    })
+    this.$Bus.$on("focusComment", () => {
+      this.$refs.messageInput.focus();
+    });
   },
 
   activated() {
     // 绑定滚动条到底部的事件
-    addScollEvent(this.handleScroll,1000);
+    addScollEvent(this.handleScroll, 1000);
   },
   deactivated() {
     deleteScollEvent(); // 失活时注销
@@ -288,17 +282,17 @@ export default {
         this.comments.push(res.data);
         this.count = res.count;
         // 取消正在加载
-        if(this.page*this.pageSize>=this.count){
-          setTimeout(this.showFoot=true)
+        if (this.page * this.pageSize >= this.count) {
+          setTimeout((this.showFoot = true));
         }
       } catch (err) {
-          this.$message.error(err)
-          setTimeout(this.showFoot=true)
+        this.$message.error(err);
+        setTimeout((this.showFoot = true));
       }
     },
     // 加载吓一页评论
     handleScroll() {
-      console.log('aaa')
+      console.log("aaa");
       if (this.page * this.pageSize >= this.count) {
         return;
       }
@@ -397,11 +391,14 @@ export default {
     },
     // 判断是否已经点赞
     haveLiked(item) {
-      if (item.like_userid.indexOf(this.userInfo.id) == -1) {
-        return false;
-      } else {
-        return true;
+      if (this.userInfo) {
+        if (item.like_userid.indexOf(this.userInfo.id) == -1) {
+          return false;
+        } else {
+          return true;
+        }
       }
+      return false;
     },
     // 重置某个点赞
     resetLike(message, flag, reply) {

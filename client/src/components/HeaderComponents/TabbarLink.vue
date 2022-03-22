@@ -4,8 +4,8 @@
       <!-- 用户信息 -->
       <div class="userbox">
           <div class="is-login" v-if="loginStatus">
-              <el-avatar class="avatar" :src="userInfo.avatar"></el-avatar>
-              <span>{{userInfo.name}}</span>
+              <el-avatar class="avatar " :src="userInfo.avatar"></el-avatar>
+                  <span class="click name" @click="$router.push('/profile')">{{userInfo.username}}</span>
           </div>
           <div class="no-login" @click="handleLogin" v-else>
               登录
@@ -34,7 +34,7 @@ export default {
         handleLogin(){
             this.$router.push('/login')
         },
-        // 
+        // 登出
     },
      mounted(){
         // DOM挂载完获取获取用户信息
@@ -58,20 +58,25 @@ export default {
     flex-wrap: nowrap;
     .userbox{
         display: flex;
-        color: #fdfbfb;
+        color: #fff;
         float: right;
+        margin-left: 33px;
         .is-login{
-            font-size: 14px;
-            width: 120px;
+            font-size: 18px;
             display: flex;
             align-items: center;
+
             .avatar{
-                margin-right: 20px;
+                width: 50px;
+                height: 50px;
+                margin-right: 15px;
                 transition: all 1s linear;
+                &:hover{
+                    transform: rotate(360deg);
+                }
             }
-            :hover{
-                transform: rotate(360deg);
-            }
+            
+            
         }
         .no-login{
             font-size: 14px;

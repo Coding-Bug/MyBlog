@@ -171,7 +171,7 @@ export default {
         });
         // 表单验证成功,发送登录请求
         let res = await this.$api.userLogin(this.userInfo);
-        this.$message.success(`${res.data.name} 欢迎回来o(^▽^)o  请稍等...`);
+        this.$message.success(`${res.data.username} 欢迎回来o(^▽^)o  请稍等...`);
         // 保存用户信息
         this.$store.dispatch("user/saveUser", res.data);
         // 修改登陆状态

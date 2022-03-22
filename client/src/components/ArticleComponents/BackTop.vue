@@ -1,6 +1,9 @@
 <template>
   <div id="BackTop">
-    <div :class="{like:true, BackTop_item:true,high_light:haveLike}" @click="articleLike">
+    <div
+      :class="{ like: true, BackTop_item: true, high_light: haveLike }"
+      @click="articleLike"
+    >
       <i class="iconfont icon-dianzan like-comment">
         <span v-show="like != 0" class="like_num">{{
           like | noMoreThen999
@@ -21,7 +24,6 @@
 </template>
 
 <script>
-
 export default {
   name: "Back",
   props: {
@@ -33,9 +35,9 @@ export default {
     // 点赞的id
     like_userid: {
       type: Array,
-      default:function(){
-        return []
-      }
+      default: function () {
+        return [];
+      },
     },
     // 评论人数
     comment: {
@@ -43,23 +45,24 @@ export default {
       default: 0,
     },
     // 用户信息
-    userInfo:{
-      type:Object,
-      default:function(){
-        return {}
-      }
-    }
+    userInfo: {
+      type: Object,
+      default: function () {
+        return {};
+      },
+    },
   },
   computed: {
-    
-    haveLike(){
-      if(this.like_userid.indexOf(this.userInfo.id)!=-1){
-        return true
-      }else{
-        return false
+    haveLike() {
+      if (this.userInfo) {
+        if (this.like_userid.indexOf(this.userInfo.id) != -1) {
+          return true;
+        } else {
+          return false;
+        }
       }
-    }
-
+      return false
+    },
   },
   methods: {
     // 聚焦评论框
@@ -74,9 +77,9 @@ export default {
       });
     },
     // 改变点赞状态
-    articleLike(){
-      this.$Bus.$emit('articleLike')
-    }
+    articleLike() {
+      this.$Bus.$emit("articleLike");
+    },
   },
 };
 </script>

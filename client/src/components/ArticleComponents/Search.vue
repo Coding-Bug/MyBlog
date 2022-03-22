@@ -31,6 +31,7 @@ export default {
     align-items: center;
     position: relative;
     width: 30%;
+    margin-left: 161px;
     input{
         width: 100%;
         height: 32px;
