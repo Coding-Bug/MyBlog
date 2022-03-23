@@ -4,9 +4,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
-// 测试mongodb
-const {user} = require('./model/users')
+const bodyParser = require('body-parser')
 // 引入路由文件
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -40,6 +38,7 @@ app.use(logger('dev'));
 app.use(express.json());   // 解析body参数
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(bodyParser.urlencoded({extended: true})) 
 // 定义public为静态资源目录
 app.use(express.static(path.join(__dirname, 'public')));
 

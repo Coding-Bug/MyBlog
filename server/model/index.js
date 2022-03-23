@@ -20,7 +20,7 @@ module.exports = {
       options.type = options.type || 1;
       options.type = options.type === 1 ? "updateOne" : "updateMany";
       options.colName[options.type](options.where, options.newdata, (err) => {
-        err ? reject(err) : resolve;
+        err ? reject(err) : resolve();
       });
     });
   },
@@ -31,7 +31,7 @@ module.exports = {
           options.where = options.where||{}
           options.type = options.type || 1;
           options.type = options.type === 1 ? "deleteOne" : "deleteMany";
-          options.colName[options.type](options.where,err=>{
+          options.colName.deleteOne(options.where,err=>{
               err?reject(err):resolve()
           })
       })

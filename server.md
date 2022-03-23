@@ -120,9 +120,28 @@
 ### 难点
 
 * 前端携带cookie时
-
   1. 服务器不能将 `Access-Control-Allow-Origin` 的值设为通配符“`*`”
   2. 服务器不能将 `Access-Control-Allow-Headers` 的值设为通配符“`*`”
   3. 服务器不能将 `Access-Control-Allow-Methods` 的值设为通配符“`*`”
 
-  
+
+
+
+
+### 重要逻辑
+
+* **邮箱认证**
+
+  1. 用户点击获取邮箱验证码，调取后端获取验证码的接口
+  2. 后端随机生成验证码，发送到用户邮箱，且将次验证码保存到数据库中，设置一定的定时然后把这个验证码删除
+  3. 用户填写验证码，在调用接口的时候，把邮箱和验证码带上
+  4. 后端进行对比即可
+
+  * 安装邮箱模块
+
+    ```js
+    npm install nodemailer
+    npm install nodemailer-smtp-transport
+    ```
+
+    
