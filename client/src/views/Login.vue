@@ -4,7 +4,7 @@
       <el-form-item prop="username" v-show="status != 2">
         <el-input
           v-model="userInfo.username"
-          placeholder="请输入用户名"
+          placeholder="请输入用户名或邮箱"
           prefix-icon="el-icon-user-solid"
         >
         </el-input>
@@ -122,7 +122,6 @@ export default {
       rules: {
         username: [
           { required: true, message: "请输入用户名", trigger: "blur" },
-          { max: 10, message: "用户名长度过长", trigger: "blur" },
         ],
         password: [
           { required: true, message: "密码不能为空", trigger: "blur" },
@@ -151,7 +150,7 @@ export default {
   },
   mounted() {
     // 检查验证码按钮状态
-    if (localStorage.getItem("skylade_counter") >= 0) {
+    if (localStorage.getItem("skyblade_counter") >= 0) {
       this.countDown();
     }
   },
@@ -164,11 +163,12 @@ export default {
     async userLogin() {
       // 对表单的用户名和密码进行校验
       try {
-        this.$refs.ruleForm.validateField(["username", "password"], (err) => {
+        this.$refs.ruleForm.validateField([ "password"], (err) => {
           if (err) {
             throw err;
           }
         });
+        
         // 表单验证成功,发送登录请求
         let res = await this.$api.userLogin(this.userInfo);
         this.$message.success(`${res.data.username} 欢迎回来o(^▽^)o  请稍等...`);
@@ -197,7 +197,7 @@ export default {
         await this.$api.sendEmail({ email: this.userInfo.email });
         // 设置过期失效
         this.$message.success("验证码已发送，请查收o(^▽^)o");
-        localStorage.setItem("skylade_counter", 60);
+        localStorage.setItem("skyblade_counter", 60);
         this.countDown();
       } catch (err) {
         this.$message.error(err);
@@ -207,7 +207,7 @@ export default {
     countDown() {
       // 设计倒计时
       this.canSend = false;
-      this.countTime = localStorage.getItem("skylade_counter");
+      this.countTime = localStorage.getItem("skyblade_counter");
       this.codeMessage = `重新发送 ${this.countTime}s`;
       this.timer = setInterval(() => {
         this.countTime--;
@@ -217,7 +217,7 @@ export default {
           this.canSend = true;
         } else {
           this.codeMessage = `重新发送 ${this.countTime}s`;
-          localStorage.setItem("skylade_counter", this.countTime);
+          localStorage.setItem("skyblade_counter", this.countTime);
         }
       }, 1000);
     },
@@ -232,6 +232,9 @@ export default {
             }
           }
         );
+        if(this.userInfo.username.length>10){
+          throw ("用户名过长")
+        }
         let res = await this.$api.userRegister(this.userInfo);
         this.$message.success("注册成功，快去登录吧o(^▽^)o");
         setTimeout(() => {

@@ -28,11 +28,7 @@ export const userRegister =(userInfo)=>post('/users/register',userInfo)
  */
 export const userResetPassword = (userInfo)=>post('/users/resetPassword',userInfo)
 
-/**
- * @method 退出登录
- * @param {Object} params   [token]
- */
-export const userLogout  = (params)=>post('/users/logout',params)
+
 
 /**
  * @method 获取用户信息

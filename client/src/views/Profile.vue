@@ -158,14 +158,9 @@ export default {
       }
     },
     // 退出登录
-    async userLogout() {
-      try {
-        await this.$api.userLogout({ token: this.token });
+    userLogout() {
         this.$store.dispatch("user/setLoginStatus", false); // 改变登录状态
         window.location.reload()
-      } catch (err) {
-        console.log(err);
-      }
     },
 
     // 提交修改
