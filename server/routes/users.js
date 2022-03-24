@@ -12,4 +12,5 @@ router.post('/login',users.userLogin)
 router.post('/sendEmail',users.sendEmail)
 router.post('/register',users.userRgester)
 router.post('/resetPassword',users.resetPassword)
+router.get('/getInfo',users.getUserInfo)
 module.exports = router;

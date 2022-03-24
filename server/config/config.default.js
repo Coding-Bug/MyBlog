@@ -3,6 +3,7 @@ module.exports ={
     emailAuth:{
         user:'1752552274@qq.com',
         pass:'zdrdqzfnlkslcdgb'
-    }
+    },
+    tokenPath:['/users/getInfo']
     
 }

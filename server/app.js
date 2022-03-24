@@ -5,6 +5,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const bodyParser = require('body-parser')
+const {verify} = require('./middleware/verify')
+const config = require('./config/config.default')
 // 引入路由文件
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -15,7 +17,7 @@ app.all('*', function (req, res, next) {
   // 设置请求头为允许跨域
   res.header('Access-Control-Allow-Origin','*');
   // 设置服务器支持的所有头信息字段
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild, sessionToken');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild, accessToken');
   res.header('Content-Type','application/x-www-form-urlencoded;charset=UTF-8')
   // 设置服务器支持的所有跨域请求的方法
   res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
@@ -39,6 +41,7 @@ app.use(express.json());   // 解析body参数
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true})) 
+app.use(config.tokenPath,verify) // 配置需要验证token的中间件
 // 定义public为静态资源目录
 app.use(express.static(path.join(__dirname, 'public')));
 

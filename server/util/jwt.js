@@ -15,7 +15,7 @@ exports.setToken = function(username,userid){
 // 验证token
 exports.verifyToken = function(token){
     return new Promise((resolve,reject)=>{
-        let info = jwt.verify(token.split(' '[1]),singkey)
+        let info = jwt.verify(token,singkey)
         resolve(info)
     })
 }

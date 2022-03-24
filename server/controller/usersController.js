@@ -17,7 +17,7 @@ module.exports = {
   async userLogin(req, res) {
     const { username, password } = req.body;
     try {
-      let data = await dao.find({ colName: users, where: { $or:[{username},{email:username}] } });
+      let data = await dao.find({ colName: users, where: { $or: [{ username }, { email: username }] } });
       // 用户名不存在
       if (data.length == 0) {
         throw ({
@@ -29,7 +29,7 @@ module.exports = {
           }
         })
       }
-      data = await dao.find({ colName: users, where: { $or:[{username, password},{email:username,password}] } });
+      data = await dao.find({ colName: users, where: { $or: [{ username, password }, { email: username, password }] } });
       // 密码错误
       if (data.length == 0) {
         throw ({
@@ -141,7 +141,7 @@ module.exports = {
       res.status(500).send({ code: 500, msg: '邮件发送失败' })
     }
   },
-  
+
   /**
    *用户注册
    */
@@ -153,8 +153,13 @@ module.exports = {
       if (data.length != 0) {
         throw (
           {
-            status: 401,
-            msg: '用户名已存在'
+            status: 403,
+            body: {
+              msg: '用户名已存在',
+              code: 403
+
+            }
+
           }
         )
       }
@@ -163,22 +168,26 @@ module.exports = {
       if (data.length == 0) {
         throw (
           {
-            status: 401,
-            msg: '验证码错误'
+            status: 403,
+            body: {
+              msg: '验证码错误',
+              code: 403
+
+            }
           }
         )
       }
 
       // 保存用户信息
       await dao.insert({ colName: users, data: { email: email, username, password, roleType: 1 } })
-      
+
       // 清除验证码
-      dao.delete({colName:codes,where:{email}})
+      dao.delete({ colName: codes, where: { email } })
       res.send({ code: 200, mag: '注册成功' })
 
     } catch (err) {
-      if (err.status && err.msg) {
-        res.status(err.status).send(err)
+      if (err.status && err.body) {
+        res.status(err.status).send(err.body)
       } else {
         console.log(err)
       }
@@ -188,39 +197,89 @@ module.exports = {
   /**
    * 重置密码
    */
-  async resetPassword(req,res){
-    const{email,code,password} = req.body
-    try{
-    let data1 = await dao.find({colName:users,where:{email}}) // 获取用户
-    let data2 = await dao.find({colName:codes,where:{email}}) // 检查验证码
-    if(data1.length==0){
-      throw({
-        status:401,
-        msg:"邮箱未注册"
-      })
-    }
+  async resetPassword(req, res) {
+    const { email, code, password } = req.body
+    try {
+      let data1 = await dao.find({ colName: users, where: { email } }) // 获取用户
+      let data2 = await dao.find({ colName: codes, where: { email } }) // 检查验证码
+      if (data1.length == 0) {
+        throw ({
+          status: 403,
+          body: {
+            msg: '邮箱未注册',
+            code: 403
 
-    if(data2.length==0){
-      throw({
-        status:401,
-        msg:'验证码错误'
-      })
-    }
+          }
+        })
+      }
 
-    // 重置密码
-    await dao.update({colName:users,where:{email},newdata:{$set:{password}}})
-    // 清除验证码
-     dao.delete({colName:codes,where:{email}})
+      if (data2.length == 0) {
+        throw ({
+          status: 403,
+          body: {
+            msg: '验证码错误',
+            code: 403
 
-    // 返回
-    console.log('成功')
-    res.send({code:200,msg:'密码修改成功'})
-    }catch(err){
-      if (err.status && err.msg) {
-        res.status(err.status).send(err)
+          }
+        })
+      }
+
+      // 重置密码
+      await dao.update({ colName: users, where: { email }, newdata: { $set: { password } } })
+      // 清除验证码
+      dao.delete({ colName: codes, where: { email } })
+
+      // 返回
+      console.log('成功')
+      res.send({ code: 200, msg: '密码修改成功' })
+    } catch (err) {
+      if (err.status && err.body) {
+        res.status(err.status).send(err.body)
       } else {
         console.log(err)
       }
     }
+  },
+
+
+  /**
+   * 获取用户信息
+   */
+  async getUserInfo(req, res) {
+    try {
+      // 获取用户信息
+
+      let data = await dao.find({ colName: users, where: { _id: req.info._id } })
+      if (data.length == 0) {
+        throw ({
+          status: 401,
+          body: {
+            code: 401,
+            msg: '用户未找到，请重新登陆'
+          }
+        })
+      }
+      res.send({
+        code: 200,
+        msg: '获取成功',
+        data: {
+          avatar: data[0].avatar,
+          username: data[0].username,
+          introduction: data[0].introduction || '空空如也｜−・;）'
+        }
+
+      }
+      )
+    } catch (err) {
+      if (err.status && err.body) {
+        res.status(err.status).send(err.body)
+      } else {
+        console.log(err)
+      }
+
+    }
+
+
+
   }
 }
