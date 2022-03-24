@@ -14,11 +14,22 @@ module.exports={
                 next()
             }else{
                 // 身份认证失败
-                res.status(401).send({
-                    code:401,
-                    mas:'登录过期，请重新登录'
+                next({
+                    status:401,
+                    body:{
+                        code:401,
+                        msg:'登录过期，请重新登录'
+                    }
                 })
             }
+        },err=>{
+            next({
+                status:401,
+                body:{
+                    code:401,
+                    msg:'无效的token'
+                }
+            })
         })
         
         

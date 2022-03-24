@@ -14,13 +14,13 @@ const smtpTransport = require("nodemailer-smtp-transport");
 const { where } = require("../model/users");
 
 module.exports = {
-  async userLogin(req, res) {
+  async userLogin(req, res, next) {
     const { username, password } = req.body;
     try {
       let data = await dao.find({ colName: users, where: { $or: [{ username }, { email: username }] } });
       // 用户名不存在
       if (data.length == 0) {
-        throw ({
+        next({
           status: 401,
           body: {
             code: 401,
@@ -28,11 +28,12 @@ module.exports = {
             data: {},
           }
         })
+        return
       }
       data = await dao.find({ colName: users, where: { $or: [{ username, password }, { email: username, password }] } });
       // 密码错误
       if (data.length == 0) {
-        throw ({
+        next({
           status: 401,
           body: {
             code: 401,
@@ -40,11 +41,12 @@ module.exports = {
             data: {},
           }
         })
+        return
       }
 
       // 如果已经被拉入黑名单
       if (data[0].roleType === 3) {
-        throw ({
+        next({
           status: 403,
           body: {
             code: 403,
@@ -52,6 +54,7 @@ module.exports = {
             data: {},
           }
         })
+        return
       }
       // 登录成功
       // 生成token
@@ -66,43 +69,44 @@ module.exports = {
           avatar: data[0].avatar,
         }
       })
-
-
     } catch (err) {
-      if (err.status && err.body) {
-        res.status(err.status).send(err.body);
-      }
+      next(err)
     }
+
+
+
   },
 
   /**
    * 发送邮件
    */
-  async sendEmail(req, res) {
-
-    // 邮件发送人配置
-    const transport = nodemailer.createTransport(
-      {
-        host: "smtp.qq.com",
-        port: 587,
-
-        auth: emailAuth
-      }
-    )
-    /*生成验证码*/
-    const randomFns = () => {
-      // 生成6位随机数
-      let code = ""
-      for (let i = 0; i < 6; ++i) {
-        code += parseInt(Math.random() * 10)
-      }
-      return code
-    }
-
-    /*发送验证码*/
-    let EMAIL = req.body.email
-    let code = randomFns()
+  async sendEmail(req, res, next) {
     try {
+
+
+      // 邮件发送人配置
+      const transport = nodemailer.createTransport(
+        {
+          host: "smtp.qq.com",
+          port: 587,
+
+          auth: emailAuth
+        }
+      )
+      /*生成验证码*/
+      const randomFns = () => {
+        // 生成6位随机数
+        let code = ""
+        for (let i = 0; i < 6; ++i) {
+          code += parseInt(Math.random() * 10)
+        }
+        return code
+      }
+
+      /*发送验证码*/
+      let EMAIL = req.body.email
+      let code = randomFns()
+
       await transport.sendMail(
         {
           from: '1752552274@qq.com',
@@ -137,21 +141,22 @@ module.exports = {
 
       res.send({ code: 200, msg: '邮件发送成功' })
     } catch (err) {
-      console.log(err)
-      res.status(500).send({ code: 500, msg: '邮件发送失败' })
+      next(err)
     }
   },
 
   /**
    *用户注册
    */
-  async userRgester(req, res) {
+  async userRgester(req, res, next) {
     const { username, password, email, code } = req.body
     try {
+
+
       let data = await dao.find({ colName: users, where: { username } })
-      console.log(data)
+
       if (data.length != 0) {
-        throw (
+        next(
           {
             status: 403,
             body: {
@@ -162,11 +167,12 @@ module.exports = {
 
           }
         )
+        return
       }
 
       data = await dao.find({ colName: codes, where: { e_mail: email, code } })
       if (data.length == 0) {
-        throw (
+        next(
           {
             status: 403,
             body: {
@@ -176,6 +182,7 @@ module.exports = {
             }
           }
         )
+        return
       }
 
       // 保存用户信息
@@ -184,26 +191,24 @@ module.exports = {
       // 清除验证码
       dao.delete({ colName: codes, where: { email } })
       res.send({ code: 200, mag: '注册成功' })
-
     } catch (err) {
-      if (err.status && err.body) {
-        res.status(err.status).send(err.body)
-      } else {
-        console.log(err)
-      }
+      next(err)
     }
+
   },
 
   /**
    * 重置密码
    */
-  async resetPassword(req, res) {
+  async resetPassword(req, res, next) {
     const { email, code, password } = req.body
     try {
+
+
       let data1 = await dao.find({ colName: users, where: { email } }) // 获取用户
       let data2 = await dao.find({ colName: codes, where: { email } }) // 检查验证码
       if (data1.length == 0) {
-        throw ({
+        next({
           status: 403,
           body: {
             msg: '邮箱未注册',
@@ -211,17 +216,18 @@ module.exports = {
 
           }
         })
+        return
       }
 
       if (data2.length == 0) {
-        throw ({
+        next({
           status: 403,
           body: {
             msg: '验证码错误',
             code: 403
-
           }
         })
+        return
       }
 
       // 重置密码
@@ -230,14 +236,9 @@ module.exports = {
       dao.delete({ colName: codes, where: { email } })
 
       // 返回
-      console.log('成功')
       res.send({ code: 200, msg: '密码修改成功' })
     } catch (err) {
-      if (err.status && err.body) {
-        res.status(err.status).send(err.body)
-      } else {
-        console.log(err)
-      }
+      next(err)
     }
   },
 
@@ -245,13 +246,15 @@ module.exports = {
   /**
    * 获取用户信息
    */
-  async getUserInfo(req, res) {
+  async getUserInfo(req, res, next) {
+
+    // 获取用户信息
     try {
-      // 获取用户信息
+
 
       let data = await dao.find({ colName: users, where: { _id: req.info._id } })
       if (data.length == 0) {
-        throw ({
+        next({
           status: 401,
           body: {
             code: 401,
@@ -271,15 +274,26 @@ module.exports = {
       }
       )
     } catch (err) {
-      if (err.status && err.body) {
-        res.status(err.status).send(err.body)
-      } else {
-        console.log(err)
-      }
+      next(err)
 
     }
 
 
 
+
   }
+
+  /**
+   * 修改用户信息
+   */
+
+  // async changeUserInfo(req,res){
+  //   try{
+
+
+  //   }catch(err){
+
+
+  //   }
+  // }
 }

@@ -44,7 +44,7 @@ app.use(bodyParser.urlencoded({extended: true}))
 app.use(config.tokenPath,verify) // 配置需要验证token的中间件
 // 定义public为静态资源目录
 app.use(express.static(path.join(__dirname, 'public')));
-
+  
 // 引用相关的路由
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
@@ -54,15 +54,17 @@ app.use(function(req, res, next) {
   next(createError(404));
 });
 
-// error handler
+// 统一错误处理
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  if(err.status&&err.body){
+    res.status(err.status).send(err.body)
+  }else{
+    res.status(500);
+    res.send({
+      code:500,
+      msg:'服务器出错了Ｏ(≧口≦)Ｏ'
+    })
+  }  
 });            
                     
 app.listen(9000,function(){
