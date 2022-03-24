@@ -20,7 +20,7 @@ const mutations={
         state.token=token
     },
     REMOVE_USER(state){
-       state.userInfo=null
+       state.userInfo=''
     }
 }
 

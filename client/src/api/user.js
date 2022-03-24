@@ -32,10 +32,9 @@ export const userResetPassword = (userInfo)=>post('/users/resetPassword',userInf
 
 /**
  * @method 获取用户信息
- * @param {Object} params [内置token]
  */
 
-export const getUserInfo  = (params)=>post('/users/getInfo',params)
+export const getUserInfo  = ()=>get('/users/getInfo')
 
 /**
  * @method 更新用户信息

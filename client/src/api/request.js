@@ -4,6 +4,7 @@ import axios from "axios";
 import { Message } from "element-ui";
 import store from '../store'
 import router from '../router'
+
 // 配置axios(进行全局配置)
 // axios.defaults.baseURL = "http://127.0.0.1:4523/mock/697537";
 axios.defaults.baseURL = "http://127.0.0.1:9000";
@@ -18,7 +19,7 @@ axios.interceptors.request.use(
     // 判断token,加上token，一次把所有的都加上
     let token = store.getters["user/token"]
     if(token){
-        config.headers.accessToken = token
+        config.headers.Authorization = token
     }
     return config;
   },
@@ -42,7 +43,7 @@ axios.interceptors.response.use(
         // 401则让用户重新登录，并删除token信息
         if(error.response.status==401){
             router.push('/login')
-            store.dispatch('user/removeToken')
+            store.dispatch('user/setLoginStatus',false)
         }
         
         return Promise.reject(error.response)

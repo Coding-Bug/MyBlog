@@ -114,6 +114,7 @@ export default {
     }
   },
   activated() {
+    this.getInfo()
     if (!this.token) {
       console.log(this.token);
       this.$message("登录后才能查看个人信息ヽ( o･ｪ･)ﾉ");
@@ -123,6 +124,7 @@ export default {
   mounted() {
     this.getInfo();
   },
+
 
   methods: {
     // 删除图片
@@ -147,7 +149,7 @@ export default {
     // 获取信息
     async getInfo() {
       try {
-        let res = await this.$api.getUserInfo({ token: this.token });
+        let res = await this.$api.getUserInfo();
         this.userInfo = res.data;
         // 保存副本
         for (var key in this.userInfo) {
