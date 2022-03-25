@@ -121,9 +121,6 @@ export default {
       this.$router.push("/login");
     }
   },
-  mounted() {
-    this.getInfo();
-  },
 
 
   methods: {
@@ -132,7 +129,7 @@ export default {
       this.userInfo.avatar = null;
     },
     handleAvatarChange(file) {
-      this.params.avatar = file; // 将修改的新头像放进提交参数里面
+      this.params.avatar = file.raw; // 将修改的新头像放进提交参数里面
       this.$set(this.userInfo, "avatar", URL.createObjectURL(file.raw));
     },
     // 占位，无需实现
@@ -151,6 +148,7 @@ export default {
       try {
         let res = await this.$api.getUserInfo();
         this.userInfo = res.data;
+        
         // 保存副本
         for (var key in this.userInfo) {
           this.infoCopy[key] = this.userInfo[key];
@@ -176,14 +174,19 @@ export default {
         return;
       }
       try {
-        this.params.avatar = this.userInfo.avatar;
-        this.params.token = this.token;
-        this.params.username = this.userInfo.username;
-        this.params.introduction = this.userInfo.introduction;
-        await this.$api.changeUserInfo(this.params);
+        let formData = new FormData()
+        formData.append('avatar',this.params.avatar)
+        formData.append('username',this.userInfo.username)
+        formData.append('introduction', this.userInfo.introduction)
+        await this.$api.changeUserInfo(formData);
         this.$message.success("修改成功o(*￣▽￣*)o");
-        window.location.reload();
+        this.isEdit=false
+        this.getInfo()
+        // 修改成功之后更新用户信息
+        this.$store.dispatch('user/saveUser',this.userInfo)
       } catch (err) {
+        this.isEdit=false
+        this.discardChanges()
         this.$message.error(err);
       }
     },
