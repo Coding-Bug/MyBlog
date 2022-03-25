@@ -6,7 +6,6 @@ module.exports={
         let token = req.headers['authorization']
         verifyToken(token).then(info=>{
             if(info){
-                console.log(info)
                 req.info={
                     username:info.name,
                     _id:info._id

@@ -4,14 +4,19 @@
 const dao = require("../model/index");
 const users = require("../model/users");
 const codes = require('../model/codes')
+const path = require('path')
+const fs = require('fs')
+const formidable = require('formidable')
 const { setToken, verifyToken } = require("../util/jwt")
 // 自己的邮箱
 const { emailAuth } = require('../config/config.default')
-
+const config = require('../config/config.default')
 // 邮件发送模块
 const nodemailer = require("nodemailer");
 const smtpTransport = require("nodemailer-smtp-transport");
 const { where } = require("../model/users");
+
+
 
 module.exports = {
   async userLogin(req, res, next) {
@@ -262,11 +267,15 @@ module.exports = {
           }
         })
       }
+      let avatar
+      if (data[0].avatar) {
+        avatar = config.baseURL + data[0].avatar
+      }
       res.send({
         code: 200,
         msg: '获取成功',
         data: {
-          avatar: data[0].avatar,
+          avatar: avatar,
           username: data[0].username,
           introduction: data[0].introduction || '空空如也｜−・;）'
         }
@@ -281,19 +290,55 @@ module.exports = {
 
 
 
-  }
+  },
 
   /**
    * 修改用户信息
    */
 
-  // async changeUserInfo(req,res){
-  //   try{
+  async changeUserInfo(req, res) {
 
+    try {
+      // 创建表单解析对象
+      const form = new formidable.IncomingForm()
+      // 配置文件上传路径
+      let avatarPath = path.join(__dirname, '../public/images/avatar')
+      form.uploadDir = avatarPath
+      // 保留文拓展名
+      form.keepExtensions = true
+      // 解析表单
+      form.parse(req, async (err, fields, files) => {
+        if (err) {
+          throw (err)
+        }
 
-  //   }catch(err){
+        // 如果有上传头像
+        if (files.avatar) {
+          let oldPath = files.avatar.path
+          let newPath = avatarPath + '/' + req.info._id + '.png'
+          fs.rename(oldPath, newPath, async (err) => {
+            if (err) {
+              throw (err)
+            } else {
+              // 获取图片在public中的路径放到集合
+              avatar = newPath.split('public')[1]
+            }
+          })
+          // 更新用户信息
+          await dao.update({ colName: users, where: { _id: req.info._id }, newdata: { username: fields.username, introduction: fields.introduction, avatar: avatar } })
+        } else {
+          // 更新用户信息
+          await dao.update({ colName: users, where: { _id: req.info._id }, newdata: { username: fields.username, introduction: fields.introduction } })
+        }
+        res.send({
+          code: 200,
+          msg: '修改用户信息成功'
+        })
+      })
 
+    } catch (err) {
+      console.log(err)
 
-  //   }
-  // }
+    }
+  }
 }

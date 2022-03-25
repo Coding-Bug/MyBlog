@@ -18,7 +18,7 @@ app.all('*', function (req, res, next) {
   res.header('Access-Control-Allow-Origin','*');
   // 设置服务器支持的所有头信息字段
   res.header('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild, accessToken');
-  res.header('Content-Type','application/x-www-form-urlencoded;charset=UTF-8')
+  res.header('Content-Type','application/x-www-form-urlencoded;charset=UTF-8',)
   // 设置服务器支持的所有跨域请求的方法
   res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
   // 设置可携带cookie
@@ -59,6 +59,7 @@ app.use(function(err, req, res, next) {
   if(err.status&&err.body){
     res.status(err.status).send(err.body)
   }else{
+    console.log(err)
     res.status(500);
     res.send({
       code:500,
