@@ -18,7 +18,7 @@
           @click="detailPage(item.article_id)"
         >
           <div class="img">
-            <img :src="item.img" alt="图片" />
+            <img :src="item.cover" alt="图片" />
           </div>
           <div class="text">
             <!-- 标题 -->
@@ -34,12 +34,12 @@
               <!-- 标签 -->
               <div>
                 <el-tag
-                  v-for="label in item.labels"
-                  :key="label.lable_id"
+                  v-for="tag in item.tags"
+                  :key="tag"
                   class="tag"
                 >
                   <i class="el-icon-price-tag"> </i>
-                  {{ label.tag }}
+                  {{ tag }}
                 </el-tag>
               </div>
               <!-- 创建信息 -->
@@ -62,7 +62,7 @@
                 <span> <i class="el-icon-view"> </i>{{ item.visited }} </span>
                 <span>
                   <i class="iconfont icon-dianzan"></i>
-                  {{ item.like }}
+                  {{ item.likeCount }}
                 </span>
               </div>
             </div>
@@ -95,7 +95,7 @@ export default {
   data() {
     return {
       // 总文章数
-      count: 1,
+      count: 0,
       // 获取列表请求相关参数
       params: {
         pageSize: 3,
@@ -111,48 +111,6 @@ export default {
       // 标识是否从search组件传来的
       isSearch: false,
       List: [
-        {
-          id: 1,
-          article_id: 1,
-          img: "@/assets/images/my-avarta.jpg",
-          title: "测试",
-          brief: "这是拿来测试的",
-          author: "skyblade",
-          avatar: "../assets/images/my-avarta.jpg",
-          create_time: "54613245",
-          replyCount: "5",
-          visited: "12",
-          like: "3",
-          labels: [
-            {
-              lable_id: 1,
-              tag: "javascript",
-            },
-            {
-              lable_id: 2,
-              tag: "html5",
-            },
-          ],
-        },
-        {
-          id: 2,
-          article_id: 2,
-          img: `../assets/images/my-avarta.jpg`,
-          title: "测试",
-          brief: "这是拿来测试的",
-          author: "skyblade",
-          avatar: "../assets/images/my-avarta.jpg",
-          create_time: 54613245,
-          replyCount: "5",
-          visited: "12",
-          like: 3,
-          labels: [
-            {
-              lable_id: 1,
-              tag: "javascript",
-            },
-          ],
-        },
       ],
     };
   },

@@ -10,7 +10,7 @@ const config = require('./config/config.default')
 // 引入路由文件
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-
+let articleRouter = require('./routes/article')
 var app = express();
 // 配置
 app.all('*', function (req, res, next) {
@@ -48,11 +48,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 // 引用相关的路由
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-
+app.use('/article',articleRouter);
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
+// app.use(function(req, res, next) {
+//   next(createError(404));
+// });
 
 // 统一错误处理
 app.use(function(err, req, res, next) {

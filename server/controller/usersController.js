@@ -14,7 +14,6 @@ const config = require('../config/config.default')
 // 邮件发送模块
 const nodemailer = require("nodemailer");
 const smtpTransport = require("nodemailer-smtp-transport");
-const { where } = require("../model/users");
 
 
 
@@ -71,7 +70,7 @@ module.exports = {
         token,
         data: {
           username: data[0].username,
-          avatar: data[0].avatar,
+          avatar: config.baseURL+data[0].avatar,
         }
       })
     } catch (err) {
@@ -316,16 +315,17 @@ module.exports = {
         if (files.avatar) {
           let oldPath = files.avatar.path
           let newPath = avatarPath + '/' + req.info._id + '.png'
+          let avatar
           fs.rename(oldPath, newPath, async (err) => {
             if (err) {
               throw (err)
             } else {
               // 获取图片在public中的路径放到集合
-              avatar = newPath.split('public')[1]
+             avatar = newPath.split('public')[1]
             }
           })
           // 更新用户信息
-          await dao.update({ colName: users, where: { _id: req.info._id }, newdata: { username: fields.username, introduction: fields.introduction, avatar: avatar } })
+          await dao.update({ colName: users, where: { _id: req.info._id }, newdata: { username: fields.username, introduction: fields.introduction, avatar } })
         } else {
           // 更新用户信息
           await dao.update({ colName: users, where: { _id: req.info._id }, newdata: { username: fields.username, introduction: fields.introduction } })

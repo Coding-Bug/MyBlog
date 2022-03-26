@@ -114,11 +114,14 @@ export default {
     }
   },
   activated() {
-    this.getInfo()
+  
+    
     if (!this.token) {
       console.log(this.token);
       this.$message("登录后才能查看个人信息ヽ( o･ｪ･)ﾉ");
       this.$router.push("/login");
+    }else{
+      this.getInfo()
     }
   },
 
@@ -180,8 +183,8 @@ export default {
         formData.append('introduction', this.userInfo.introduction)
         await this.$api.changeUserInfo(formData);
         this.$message.success("修改成功o(*￣▽￣*)o");
-        this.isEdit=false
         this.getInfo()
+        this.isEdit=false
         // 修改成功之后更新用户信息
         this.$store.dispatch('user/saveUser',this.userInfo)
       } catch (err) {

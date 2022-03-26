@@ -58,9 +58,8 @@ axios.interceptors.response.use(
  * */ 
 export function get(url,params){
     return new Promise((resolve,reject)=>{
-        axios.get(url,{params:{
-            params
-        }}).then(res=>{
+        axios.get(url,{params}
+        ).then(res=>{
             resolve(res.data)
         })
         .catch(err=>{
