@@ -15,7 +15,7 @@
           class="content"
           v-for="item in List"
           :key="item.id"
-          @click="detailPage(item.article_id)"
+          @click="detailPage(item)"
         >
           <div class="img">
             <img :src="item.cover" alt="图片" />
@@ -157,7 +157,7 @@ export default {
     },
     // 处理切换页数
     handlePageChange(val) {
-      this.page = val;
+      console.log(val)
       this.page = val;
       // 如果列表是由分类过来的
       if (this.isCategory) {
@@ -170,8 +170,10 @@ export default {
       }
     },
     // 处理点击跳转详情页
-    detailPage(article_id) {
-      this.$router.push(`/detail/${article_id}`);
+    detailPage(item) {
+      // 使这篇文章的访问量+1
+      item.visited++
+      this.$router.push(`/detail/${item.article_id}`);
     },
 
     // 获取文章列表
@@ -179,6 +181,7 @@ export default {
       // 文章正在加载状态
       // this.$store.dispach('')
       try {
+        this.params.page=this.page
         const res = await this.$api.getArticle(this.params);
         this.List = res.data;
         this.count = res.count;

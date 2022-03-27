@@ -41,13 +41,13 @@
     </div>
 
     <!-- 评论区域 -->
-    <Guestbook :article_id="detail.article_id"></Guestbook>
+    <Guestbook :article_id="$route.params.id"></Guestbook>
 
     <!-- 右下角的返回顶部部分 -->
     <BackTop
-      :like="detail.like"
-      :like_userid="detail.like_userid"
-      :comment="detail.comment"
+      :like="detail.like_ids.length"
+      :like_userid="detail.like_ids"
+      :comment="detail.reply_ids.length"
       :userInfo="userInfo"
     ></BackTop>
   </div>
@@ -67,7 +67,8 @@ export default {
     return {
       // 文章对象
       detail: {
-
+        like_ids:[],
+        reply_ids:[],
       },
     };
   },
@@ -86,8 +87,11 @@ export default {
   },
   mounted() {
       // 绑定点赞
-      this.getDetail()
+    this.getDetail()
     this.$Bus.$on("articleLike",()=>{this.articleLike()})
+  },
+  activated(){
+    this.getDetail()
   },
   methods: {
     // 获取文章详情

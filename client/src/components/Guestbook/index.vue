@@ -7,7 +7,7 @@
     <!-- 编辑发布区域 -->
     <div class="compile">
       <div class="avatar">
-        <img :src="avarta" alt="头像" />
+        <img :src="userInfo.avatar" alt="头像" />
       </div>
       <div class="input-container">
         <el-input
@@ -35,9 +35,9 @@
             <div class="comment-main">
               <!-- 用户名和日期 -->
               <div class="user-date">
-                <span class="username">{{ item.name }}</span>
+                <span class="username">{{ item.author }}</span>
                 <span
-                  v-if="item.name === $store.state.user.admin"
+                  v-if="item.author === $store.state.user.admin"
                   class="admin_name"
                   >站长</span
                 >
@@ -52,15 +52,15 @@
                   @click="like(item)"
                   :class="{ click: true, high_light: haveLiked(item) }"
                   ><i class="icon-dianzan iconfont"></i
-                  ><span v-if="item.like && item.like > 0">{{
-                    item.like
+                  ><span v-if="item.like_ids && item.like_ids.length> 0">{{
+                    item.like_ids.length
                   }}</span>
                   <span v-else>点赞</span></span
                 >
                 <span class="click" @click="open(item)"
                   ><i class="el-icon-chat-dot-square"></i>
-                  <span v-if="item.reply && item.reply != 0">{{
-                    item.reply
+                  <span v-if="item.replyAcess && item.replyAcess.length!= 0">{{
+                    item.replyAcess.length
                   }}</span>
                   <span v-else>回复</span>
                 </span>
@@ -88,7 +88,7 @@
               </div>
             </div>
             <!-- 子评价 -->
-            <div class="subcomment-wrapper">
+            <div class="subcomment-wrapper" v-if="item.replyAcess.length!=0">
               <div
                 class="comment-sub"
                 v-for="subItem in item.replyAcess"
@@ -100,13 +100,13 @@
                 <div class="content-box">
                   <!-- 用户名和日期 -->
                   <div class="user-date">
-                    <span class="username">{{ subItem.name }}</span>
+                    <span class="username">{{ subItem.author }}</span>
                     <span
                       v-if="subItem.name === $store.state.user.admin"
                       class="admin_name"
                       >站长</span
                     >
-                    <span v-show="subItem.reply_name !== item.name"
+                    <span v-show="subItem.reply_name !== item.author"
                       ><span class="huifu">回复</span
                       ><span class="username">{{
                         subItem.reply_name
@@ -125,8 +125,8 @@
                       @click="like(item, subItem)"
                       :class="{ click: true, high_light: haveLiked(subItem) }"
                       ><i class="icon-dianzan iconfont"></i
-                      ><span v-if="subItem.like && subItem.like > 0">{{
-                        subItem.like
+                      ><span v-if="subItem.like_ids && subItem.like_ids.length > 0">{{
+                        subItem.like_ids.length
                       }}</span>
                       <span v-else>点赞</span></span
                     >
@@ -192,8 +192,7 @@ export default {
     },
     // 文章id
     article_id: {
-      type: Number,
-      default: 2,
+      type: String,
     },
   },
 
@@ -225,8 +224,8 @@ export default {
     };
   },
   mounted() {
-    this.getComments();
     // 绑定聚焦搜索框事件
+    this.getComments();
     this.$Bus.$on("focusComment", () => {
       this.$refs.messageInput.focus();
     });
@@ -234,11 +233,11 @@ export default {
 
   activated() {
     // 绑定滚动条到底部的事件
+    
     addScollEvent(this.handleScroll, 1000);
   },
   deactivated() {
     deleteScollEvent(); // 失活时注销
-    this.comments = [];
   },
   computed: {
     // 发表地址
@@ -279,7 +278,7 @@ export default {
           res = await this.$api.getMessage(this.getURL, this.params);
         }
         // 加入到列表
-        this.comments.push(res.data);
+        this.comments.push(...res.data);
         this.count = res.count;
         // 取消正在加载
         if (this.page * this.pageSize >= this.count) {
@@ -391,8 +390,9 @@ export default {
     },
     // 判断是否已经点赞
     haveLiked(item) {
+      console.log(this.userInfo)
       if (this.userInfo) {
-        if (item.like_userid.indexOf(this.userInfo.id) == -1) {
+        if (item.like_ids.indexOf(this.userInfo.id) == -1) {
           return false;
         } else {
           return true;
@@ -414,7 +414,7 @@ export default {
         obj.like_userid.push(this.userInfo.id); // 将用户添加倒点赞列表
       } else {
         obj.like--;
-        obj.like_userid.splice(obj.like_userid.indexOf(this.userInfo.id), 1);
+        obj.like_userid.splice(obj.like_ids.indexOf(this.userInfo.id), 1);
       }
     },
   },

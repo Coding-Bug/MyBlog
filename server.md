@@ -198,6 +198,21 @@
         })
   ```
 
-  
+
+* 评论建表设计
+
+  * `reply_ids`，是该评论的所有回复id，不管是回复谁
+  * `to_id`，是保存回复的人
+
+  ```js
+   author_id:{type:ObjectId}, // 评论者
+      article_id:{type:ObjectId,default:''},// 保存是哪条文章的主评论
+      create_time:{type:Number,default:0}, // 评论时间
+      content:{type:String,default:0}, // 内容
+      like_ids:{type:Array,default:[]}, // 点赞者
+      reply_ids:{type:Array,default:[]},// 回复的id集合
+      to_id:{type:ObjectId}, // 标记回复的人
+      message_type:{type:Number,default:1}  // 1:文章评论 2:博客留言 3:回复
+  ```
 
   

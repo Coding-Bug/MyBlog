@@ -71,6 +71,7 @@ module.exports = {
         data: {
           username: data[0].username,
           avatar: config.baseURL+data[0].avatar,
+          id:data[0]._id
         }
       })
     } catch (err) {

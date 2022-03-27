@@ -58,12 +58,13 @@ module.exports = {
         }
       })
       // 在下面定义也没事，因为上面回调是异步的
+      
+      if (typeof options.setting.skip === "number") {
+        find.skip(options.setting.skip)
+      }
       if (typeof options.setting.limit === "number") {
 
         find.limit(options.setting.limit)
-      }
-      if (typeof options.setting.skip === "number") {
-        find.skip(options.setting.skip)
       }
       if (typeof options.setting.sort === "object") {
         find.sort(options.setting.sort)
