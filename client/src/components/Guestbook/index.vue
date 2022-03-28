@@ -233,7 +233,6 @@ export default {
 
   activated() {
     // 绑定滚动条到底部的事件
-    
     addScollEvent(this.handleScroll, 1000);
   },
   deactivated() {
@@ -243,10 +242,6 @@ export default {
     // 发表地址
     publishURL() {
       return this.isComment ? "/article/leaveMessage" : "/message/leaveMessage";
-    },
-    // 获取地址
-    getURL() {
-      return this.isComment ? "/article/getMessage" : "/message/getMessage";
     },
     ...mapGetters("user", ["userInfo", "token"]),
   },
@@ -263,16 +258,17 @@ export default {
         page: this.page,
         pageSize: this.pageSize,
       };
+      if(this.count!=0&&this.page*this.pageSize>=this.count){
+        return
+      }
       try {
         let res;
         if (this.isComment) {
           // 获取评论
           this.params.article_id = this.article_id;
-          res = await this.$api.getMessage(this.getURL, this.params);
-        } else {
-          // 获取留言
-          res = await this.$api.getMessage(this.getURL, this.params);
-        }
+        } 
+        res = await this.$api.getMessage(this.params);
+        
         // 加入到列表
         this.comments.push(...res.data);
         this.count = res.count;

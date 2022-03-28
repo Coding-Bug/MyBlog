@@ -7,7 +7,94 @@ const message = require('../model/message');
 const { ObjectId } = require("mongodb");
 
 module.exports = {
-    // 给评论或者子评论点赞
+       // 获取评论或者留言
+       async getMessage(req, res, next) {
+        try {
+            let message_set = []  // 最终返回的结果数组
+
+            let { article_id, page, pageSize } = req.query
+            page = parseInt(page)
+            pageSize = parseInt(pageSize)
+            
+            let where = {}
+            // 如果是评论模块
+            if(article_id){
+                where={
+                    article_id
+                }
+            }else{  // 如果是留言模块
+                where={
+                    message_type:2
+                }
+            }
+            // console.log(article_id)
+            let count = await dao.count({ colName: message, where})
+            console.log(where)
+            if (count != 0) {
+                // 获取主评论数组
+                let data = await dao.find({ colName: message, where, setting: { limit: pageSize, skip: (page - 1) * pageSize } })
+                // 为每条主评论的返回结果做处理并获取处理主评论的回复
+                for (let i = 0; i < data.length; ++i) {
+                    let temp = {} // 保存这项评论
+
+                    // 获取用户
+                    let aut = await dao.find({ colName: users, where: { _id: data[i].author_id } })
+
+                    // 保存主评论的基本信息
+                    temp.message_id = data[i]._id
+                    temp.avatar = config.baseURL+aut[0].avatar
+                    temp.author = aut[0].username
+                    temp.create_time = data[i].create_time
+                    temp.content = data[i].content
+                    temp.like_ids = data[i].like_ids
+                    temp.replyAcess = []
+                    // 获取主评论的回复
+
+                    for (let j = 0; j < data[i].reply_ids.length; ++j) {
+                        // 这项回复对应的id
+                        let id = data[i].reply_ids[j]
+                        let temp_reply = {} // 保存主评论的回复
+
+                        // 获取回复
+                        let reply = await dao.find({ colName: message, where: { _id: id } })
+
+                        reply = reply[0]
+
+                        // 获取回复者
+                        let replyer = await dao.find({ colName: users, where: { _id: reply.author_id } })
+
+                        // 获取回复对象信息
+                        let reply_to = await dao.find({ colName: users, where: { _id: reply.to_id } })
+
+                        temp_reply.reply_id = reply._id
+                        temp_reply.avatar = config.baseURL + replyer[0].avatar
+                        temp_reply.author = replyer[0].username
+                        temp_reply.create_time = reply.create_time
+                        temp_reply.content = reply.content
+                        temp_reply.like_ids = reply.like_ids
+                        temp_reply.reply_name = reply_to[0].username
+
+                        // 加入到子评论
+                        temp.replyAcess.push(temp_reply)
+                    }
+                    message_set.push(temp)
+                }
+
+            }
+            // console.log(message_set)
+            res.send({
+                code:200,
+                msg:'获取评论成功',
+                count,
+                data:message_set
+            })
+        } catch (err) {
+            next(err)
+        }
+
+
+    },
+    // 给评论或留言点赞
     async likeMessage(req, res, next) {
         try {
             let { message_id } = req.body

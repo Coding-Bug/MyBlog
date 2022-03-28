@@ -8,4 +8,10 @@ import {get,post} from './request'
 
 export const likeMessage=(params)=>post('/message/likeMessage',params)
 
+/**
+ * @method 根据评论或者留言
+ * @param {String} URL
+ * @param {Object} params 
+ */
+ export const getMessage  = (params)=>get('/message/getMessage',params)
 
