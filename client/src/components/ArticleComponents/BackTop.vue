@@ -1,7 +1,7 @@
 <template>
   <div id="BackTop">
     <div
-      :class="{ like: true, BackTop_item: true, high_light: haveLike }"
+      :class="{ like: true, BackTop_item: true, high_light: haveLike}"
       @click="articleLike"
     >
       <i class="iconfont icon-dianzan like-comment">
@@ -54,6 +54,7 @@ export default {
   },
   computed: {
     haveLike() {
+      console.log('计算')
       if (this.userInfo) {
         if (this.like_userid.indexOf(this.userInfo.id) != -1) {
           return true;
@@ -103,7 +104,6 @@ export default {
     line-height: 50px;
     &:hover {
       background-color: #e7e4e4;
-      color: #1e90ff;
     }
     i {
       font-size: 22px;

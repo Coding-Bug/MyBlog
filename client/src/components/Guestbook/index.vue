@@ -402,7 +402,7 @@ export default {
     },
     // 重置某个点赞
     resetLike(message, flag, reply) {
-      console.log(message, reply);
+      
       let obj;
       if (reply) {
         obj = reply;

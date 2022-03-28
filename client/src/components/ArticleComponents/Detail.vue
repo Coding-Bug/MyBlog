@@ -102,7 +102,7 @@ export default {
           this.detail = res.data;
         }
       } catch (err) {
-        this.$message.err;
+        this.$message.error(err);
       }
     },
     // 点赞
@@ -130,12 +130,10 @@ export default {
     // 改变点赞状态
     changeLike(flag){
       // 如果现在是点赞的状态
-      let obj =this.detail.like_userid
+      let obj =this.detail.like_ids
       if(flag){
-        this.detail.like++
         obj.push(this.userInfo.id)
       }else{
-        this.detail.like--
         obj.splice(obj.indexOf(this.userInfo.id),1)
       }
     }

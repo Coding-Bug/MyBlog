@@ -218,5 +218,38 @@ module.exports = {
         }
 
 
+    },
+
+    // 给文章点赞
+    async likeArticle(req,res,next){
+        try{
+            let {article_id} = req.body
+            let user_id = req.info._id
+            // 查看该用户是否已经为文章点赞
+            let data =await dao.find({colName:article,where:{article_id,like_ids: { $elemMatch: { $eq: user_id }}}})
+            
+            // 如果已经点赞，则更新为未点赞并设置flag为false标识
+            if(data.length!=0){
+                // 从点赞中删除该用户
+                await dao.update({colName:article,where:{article_id},newdata:{"$pull":{"like_ids":user_id}}})
+                res.send({
+                    code:200,
+                    msg:'取消点赞',
+                    flag:false
+                })
+
+            }else{
+                // 从点赞中添加该用户
+                await dao.update({colName:article,where:{article},newdata:{"$push":{"like_ids":user_id}}})
+                res.send({
+                    code:200,
+                    msg:'点赞',
+                    flag:true
+                })
+            }
+
+        }catch(err){
+            next(err)
+        }
     }
 }
