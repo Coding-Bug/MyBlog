@@ -46,12 +46,6 @@ export const getMessage  = (URL,params)=>get(URL,params)
  */
 export const publishOrReply = (publishURL,params)=>post(publishURL,params)
 
-/**
- * @method 点赞评论或留言
- * @param {String} likeURL [路径]
- * @param {Object} params [参数]
- */
-export const likeMessage=(likeURL,params)=>post(likeURL,params)
 
 
 /**

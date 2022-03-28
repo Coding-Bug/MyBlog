@@ -240,7 +240,7 @@ module.exports = {
 
             }else{
                 // 从点赞中添加该用户
-                await dao.update({colName:article,where:{article},newdata:{"$push":{"like_ids":user_id}}})
+                await dao.update({colName:article,where:{article_id},newdata:{"$push":{"like_ids":user_id}}})
                 res.send({
                     code:200,
                     msg:'点赞',
@@ -252,4 +252,5 @@ module.exports = {
             next(err)
         }
     }
+
 }

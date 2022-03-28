@@ -49,8 +49,8 @@
               <!-- 点赞和回复 -->
               <div class="like-reply">
                 <span
-                  @click="like(item)"
-                  :class="{ click: true, high_light: haveLiked(item) }"
+                  @click="like(item,item.message_id)"
+                  :class="{  high_light: haveLiked(item) }"
                   ><i class="icon-dianzan iconfont"></i
                   ><span v-if="item.like_ids && item.like_ids.length> 0">{{
                     item.like_ids.length
@@ -122,8 +122,8 @@
                   <!-- 点赞和回复 -->
                   <div class="like-reply">
                     <span
-                      @click="like(item, subItem)"
-                      :class="{ click: true, high_light: haveLiked(subItem) }"
+                      @click="like(subItem,subItem.reply_id)"
+                      :class="{  high_light: haveLiked(subItem) }"
                       ><i class="icon-dianzan iconfont"></i
                       ><span v-if="subItem.like_ids && subItem.like_ids.length > 0">{{
                         subItem.like_ids.length
@@ -248,10 +248,6 @@ export default {
     getURL() {
       return this.isComment ? "/article/getMessage" : "/message/getMessage";
     },
-    // 点赞地址
-    likeURL() {
-      return this.isComment ? "/article/likeMessage" : "/message/likeMessage";
-    },
     ...mapGetters("user", ["userInfo", "token"]),
   },
   watch: {
@@ -361,24 +357,19 @@ export default {
       this.show.comment_id = "";
       this.show.subComment_id = "";
     },
-    // 点赞
-    async like(message, reply) {
+    // 点赞,统一点赞评论
+    async like(message,message_id) {
       // 判断有没有token
       if (this.token) {
         this.params = {
-          token: this.token,
-          message_id: message.message_id,
+          message_id
         };
-        // 如果是点赞回复
-        if (reply) {
-          this.params.reply_id = reply.reply_id;
-        }
         // 调用统一点赞接口
         try {
-          let res = await this.$api.likeMessage(this.likeURL, this.params);
+          let res = await this.$api.likeMessage(this.params);
           if (res.code == 200) {
             // 重置该评论点赞
-            this.resetLike(message, res.flag, reply);
+            this.resetLike(message, res.flag);
           }
         } catch (err) {
           this.$message.error(err);
@@ -390,7 +381,6 @@ export default {
     },
     // 判断是否已经点赞
     haveLiked(item) {
-      console.log(this.userInfo)
       if (this.userInfo) {
         if (item.like_ids.indexOf(this.userInfo.id) == -1) {
           return false;
@@ -401,20 +391,13 @@ export default {
       return false;
     },
     // 重置某个点赞
-    resetLike(message, flag, reply) {
-      
-      let obj;
-      if (reply) {
-        obj = reply;
-      } else {
-        obj = message;
-      }
+    resetLike(message, flag) {
       if (flag) {
-        obj.like++; // 点赞数减一
-        obj.like_userid.push(this.userInfo.id); // 将用户添加倒点赞列表
+        message.like_ids.push(this.userInfo.id); // 将用户添加倒点赞列表
+        console.log(message.like_ids)
       } else {
-        obj.like--;
-        obj.like_userid.splice(obj.like_ids.indexOf(this.userInfo.id), 1);
+        message.like_ids.splice(message.like_ids.indexOf(this.userInfo.id), 1);
+        console.log(message.like_ids)
       }
     },
   },

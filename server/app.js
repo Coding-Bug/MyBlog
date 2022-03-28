@@ -11,6 +11,7 @@ const config = require('./config/config.default')
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 let articleRouter = require('./routes/article')
+let messagerouter = require('./routes/message')
 var app = express();
 // 配置
 app.all('*', function (req, res, next) {
@@ -49,6 +50,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/article',articleRouter);
+app.use('/message',messagerouter)
 // catch 404 and forward to error handler
 // app.use(function(req, res, next) {
 //   next(createError(404));
