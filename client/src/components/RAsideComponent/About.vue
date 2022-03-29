@@ -40,7 +40,7 @@ export default {
     },
     async getBlogInfo() {
       try {
-        let res = await this.$api.getAbout();
+        let res = await this.$api.getBloginfo();
         this.blogInfo = res.data
       } catch (err) {
         console.log(err);

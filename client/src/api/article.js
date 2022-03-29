@@ -44,4 +44,4 @@ export const likeArticle =(params)=>post('/article/likeArticle',params)
 /**
  * @method 获取博客相关
  */
- export const getAbout = ()=>get('/blog/getAbout')
+ export const getBloginfo = ()=>get('/about/getBloginfo')
