@@ -86,12 +86,9 @@ export default {
     },
   },
   mounted() {
+    this.getDetail()
       // 绑定点赞
-    this.getDetail()
     this.$Bus.$on("articleLike",()=>{this.articleLike()})
-  },
-  activated(){
-    this.getDetail()
   },
   methods: {
     // 获取文章详情

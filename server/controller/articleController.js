@@ -6,7 +6,7 @@ const users = require('../model/users');
 const message = require('../model/message')
 const { ObjectId } = require("mongodb");
 const categoty = require('../model/category')
-
+const tag = require('../model/tag')
 // 插入测试数据
 // const cat = [{
 //     cat_name: 'JS面试题',
@@ -24,6 +24,22 @@ const categoty = require('../model/category')
 
 // dao.insert({colName:categoty,data:cat})
 
+// 插入测试标签
+// const ntag = [{
+//     tag_name: 'ES6',
+//     tag_count: 6
+// }, {
+
+//     tag_name: '性能优化',
+//     tag_count: 15
+
+// }, {
+//     tag_name: 'diff算法',
+//     tag_count: 33
+// }
+// ]
+
+// dao.insert({colName:tag,data:ntag})
 
 module.exports = {
     // 用户查询文章列表操作
@@ -41,7 +57,7 @@ module.exports = {
                 // 正则查询
                 where = { search: { $elemMatch: { $regex: seacher } } }
             } else if (tag) {
-                where = { tag: { $elemMatch: { $eq: tag } } }
+                where = { tags: { $elemMatch: { $eq: tag } } }
             } else if (category) {
                 where = { categorise: { $elemMatch: { $eq: category } } }
             }
@@ -56,8 +72,6 @@ module.exports = {
               
             }
             // 返回数据
-            // console.log('开始返回数据')
-            // console.log(data)
             let resData = []
             for (let i = 0; i < data.length; ++i) {
                 // 获取作者
@@ -211,6 +225,29 @@ module.exports = {
 
 
         } catch (err) {
+            next(err)
+        }
+    },
+
+    // 获取所有标签
+    async getTag(req,res,next){
+        try{
+            let resdata=[]
+            let data = await dao.find({colName:tag})
+            for(let i = 0;i<data.length;++i){
+                let tmp = {}
+                tmp.tag_id = data[i]._id
+                tmp.tag_name = data[i].tag_name
+                tmp.tag_num = data[i].tag_count
+                resdata.push(tmp)
+            }
+            res.send({
+                code:200,
+                msg:'获取标签成功',
+                data:resdata
+            })
+
+        }catch(err){
             next(err)
         }
     }
