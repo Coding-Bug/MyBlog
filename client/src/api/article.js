@@ -32,20 +32,6 @@ export const getArchive=()=>get(`/article/getArchive`)
  */
 export const getTag = ()=>get(`/article/getTag`)
 
-/**
- * @method 根据评论或者留言
- * @param {String} URL
- * @param {Object} params 
- */
-export const getMessage  = (URL,params)=>get(URL,params)
-
-/**
- * @method 评论或者留言或者回复
- * @param {String} publishURL [请求路径]
- * @param {Object} params [参数对象]
- */
-export const publishOrReply = (publishURL,params)=>post(publishURL,params)
-
 
 
 /**

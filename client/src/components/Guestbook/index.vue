@@ -49,17 +49,17 @@
               <!-- 点赞和回复 -->
               <div class="like-reply">
                 <span
-                  @click="like(item,item.message_id)"
-                  :class="{  high_light: haveLiked(item) }"
+                  @click="like(item, item.message_id)"
+                  :class="{ high_light: haveLiked(item) }"
                   ><i class="icon-dianzan iconfont"></i
-                  ><span v-if="item.like_ids && item.like_ids.length> 0">{{
+                  ><span v-if="item.like_ids && item.like_ids.length > 0">{{
                     item.like_ids.length
                   }}</span>
                   <span v-else>点赞</span></span
                 >
                 <span class="click" @click="open(item)"
                   ><i class="el-icon-chat-dot-square"></i>
-                  <span v-if="item.replyAcess && item.replyAcess.length!= 0">{{
+                  <span v-if="item.replyAcess && item.replyAcess.length != 0">{{
                     item.replyAcess.length
                   }}</span>
                   <span v-else>回复</span>
@@ -74,9 +74,11 @@
                 "
               >
                 <el-input
-                  v-model="value"
+                  v-model="reply_value"
                   maxlength="200"
-                  @keydown.enter.native="publishOrReply"
+                  @keydown.enter.native="
+                    publishOrReply($event, item, item.message_id)
+                  "
                   :rows="3"
                   type="textarea"
                   resize="none"
@@ -88,7 +90,7 @@
               </div>
             </div>
             <!-- 子评价 -->
-            <div class="subcomment-wrapper" v-if="item.replyAcess.length!=0">
+            <div class="subcomment-wrapper" v-if="item.replyAcess.length != 0">
               <div
                 class="comment-sub"
                 v-for="subItem in item.replyAcess"
@@ -122,12 +124,13 @@
                   <!-- 点赞和回复 -->
                   <div class="like-reply">
                     <span
-                      @click="like(subItem,subItem.reply_id)"
-                      :class="{  high_light: haveLiked(subItem) }"
+                      @click="like(subItem, subItem.reply_id)"
+                      :class="{ high_light: haveLiked(subItem) }"
                       ><i class="icon-dianzan iconfont"></i
-                      ><span v-if="subItem.like_ids && subItem.like_ids.length > 0">{{
-                        subItem.like_ids.length
-                      }}</span>
+                      ><span
+                        v-if="subItem.like_ids && subItem.like_ids.length > 0"
+                        >{{ subItem.like_ids.length }}</span
+                      >
                       <span v-else>点赞</span></span
                     >
                     <span class="click" @click="open(item, subItem)"
@@ -145,10 +148,16 @@
                     "
                   >
                     <el-input
-                      v-model="value"
+                      v-model="reply_value"
                       maxlength="200"
                       :placeholder="reply_placeholder"
-                      @keydown.enter.native="publishOrReply"
+                      @keydown.enter.native="
+                        publishOrReply(
+                          $event,
+                          item,
+                          subItem.reply_id
+                        )
+                      "
                       :rows="3"
                       type="textarea"
                       resize="none"
@@ -181,6 +190,7 @@
 <script>
 import { mapGetters } from "vuex";
 import { addScollEvent, deleteScollEvent } from "@/utils/scrollMore";
+import { throttle } from "@/utils/throttle";
 export default {
   name: "GuestBook",
   props: {
@@ -200,6 +210,8 @@ export default {
     return {
       // 留言
       value: "",
+      // 回复
+      reply_value: "",
       // 头像
       avarta: "dsd",
       // 控制回复框的显示和隐藏
@@ -239,11 +251,13 @@ export default {
     deleteScollEvent(); // 失活时注销
   },
   computed: {
-    // 发表地址
-    publishURL() {
-      return this.isComment ? "/article/leaveMessage" : "/message/leaveMessage";
-    },
     ...mapGetters("user", ["userInfo", "token"]),
+    like() {
+      return throttle(this.handleLike, 300);
+    },
+    publishOrReply() {
+      return throttle(this.handlePublishOrReply, 1000);
+    },
   },
   watch: {
     article_id() {
@@ -258,17 +272,14 @@ export default {
         page: this.page,
         pageSize: this.pageSize,
       };
-      if(this.count!=0&&this.page*this.pageSize>=this.count){
-        return
-      }
       try {
         let res;
         if (this.isComment) {
           // 获取评论
           this.params.article_id = this.article_id;
-        } 
+        }
         res = await this.$api.getMessage(this.params);
-        
+
         // 加入到列表
         this.comments.push(...res.data);
         this.count = res.count;
@@ -283,7 +294,6 @@ export default {
     },
     // 加载吓一页评论
     handleScroll() {
-      console.log("aaa");
       if (this.page * this.pageSize >= this.count) {
         return;
       }
@@ -291,35 +301,48 @@ export default {
       this.getComments();
     },
 
-    // 发布留言或者评论以及回复
-    async publishOrReply(e, reply_id) {
+    /**
+     * @method 发送评论
+     * @param {String} message_id [属于哪个评论下的回复]
+     * @param {String} to_id [回复哪条评论]
+     */
+    async handlePublishOrReply(e, message, to_id) {
       // 注意监听的是keydwom事件。如果监听keyUp,那么发送的时候换行也有了
       if (e.ctrlKey && e.keyCode == 13) {
         // 判断有没有token
         if (this.token) {
-          this.params = {
-            token: this.token,
-            content: this.value,
-          };
-          // 如果是评论
+
+          // 如果是回复
+          if (message) {
+            this.params.content = this.reply_value; // 评论内容
+            this.params.message_id = message.message_id
+            this.params.to_id = to_id
+          } else {
+            this.params.content = this.value;
+          }
+          // 如果是评论,将文章id一起传过去
           if (this.isComment) {
             this.params.article_id = this.article_id;
           }
-          if (reply_id) {
-            this.params.reply_id = reply_id;
-          }
           // 调用统一发布接口
           try {
-            let res = await this.$api.publishOrReply(
-              this.publishURL,
-              this.params
-            );
+            let res = await this.$api.publishOrReply(this.params);
+            this.$message.success(res.msg);
+            this.resetShow(); // 重置回复框
+            // 如果是评论和留言
+            if (!message) {
+              // 重置回复框
+              this.value = "";
 
-            if (res.code == 200) {
-              this.$message.success(res.msg);
-              // 重新发送获取评论请求
-              this.getComments();
+              // 处理评论的前端更新问题
+              if(this.page*this.pageSize>=this.count){
+                this.comments.push(res.data)
+              }
+
+            }else{  // 如果是回复，直接将该回复插入该评论中
+              message.replyAcess.push(res.data)
             }
+            
           } catch (err) {
             this.$message.error(err);
           }
@@ -354,11 +377,11 @@ export default {
       this.show.subComment_id = "";
     },
     // 点赞,统一点赞评论
-    async like(message,message_id) {
+    async handleLike(message, message_id) {
       // 判断有没有token
       if (this.token) {
         this.params = {
-          message_id
+          message_id,
         };
         // 调用统一点赞接口
         try {
@@ -390,10 +413,10 @@ export default {
     resetLike(message, flag) {
       if (flag) {
         message.like_ids.push(this.userInfo.id); // 将用户添加倒点赞列表
-        console.log(message.like_ids)
+        console.log(message.like_ids);
       } else {
         message.like_ids.splice(message.like_ids.indexOf(this.userInfo.id), 1);
-        console.log(message.like_ids)
+        console.log(message.like_ids);
       }
     },
   },

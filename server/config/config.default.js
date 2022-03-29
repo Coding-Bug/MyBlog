@@ -4,7 +4,7 @@ module.exports ={
         user:'1752552274@qq.com',
         pass:'zdrdqzfnlkslcdgb'
     },
-    tokenPath:['/users/getInfo','/users/changeInfo','/article/likeArticle','/message/likeMessage'],
+    tokenPath:['/users/getInfo','/users/changeInfo','/article/likeArticle','/message/likeMessage','/message/leaveMessage'],
     baseURL:'http://127.0.0.1:9000/'
     
 }

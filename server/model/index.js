@@ -4,10 +4,11 @@ module.exports = {
   insert(options) {
     return new Promise((resolve, reject) => {
       options = options || {}; // 防空报错
-      options.data = options.data;
-      options.colName.insertMany(options.data, (err) => {
+      options.data = options.data||{};
+     
+      options.colName.insertMany(options.data, (err,doc) => {
         // 没有err其内部在调用回调时候会占位的
-        err ? reject(err) : resolve();
+        err ? reject(err) : resolve(doc);
       });
     });
   },

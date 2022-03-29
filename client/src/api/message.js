@@ -15,3 +15,11 @@ export const likeMessage=(params)=>post('/message/likeMessage',params)
  */
  export const getMessage  = (params)=>get('/message/getMessage',params)
 
+
+/**
+ * @method 评论或者留言或者回复
+ * @param {String} publishURL [请求路径]
+ * @param {Object} params [参数对象]
+ */
+ export const publishOrReply = (params)=>post('/message/leaveMessage',params)
+

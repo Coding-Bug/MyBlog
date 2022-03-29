@@ -144,6 +144,12 @@
 
   > 其实如果不是人为设置为ObjectId，从数据库中拿到ObjectId的字段也是字符串，ObjectId不过是mogodb用来做唯一标识的罢了
 
+* **评论模块过滤以及防xss攻击**
+
+  * 利用xss模块进行防御
+
+    
+
 ### 重要逻辑
 
 * **邮箱认证**
@@ -217,7 +223,7 @@
       content:{type:String,default:0}, // 内容
       like_ids:{type:Array,default:[]}, // 点赞者
       reply_ids:{type:Array,default:[]},// 回复的id集合
-      to_id:{type:ObjectId}, // 标记回复的人
+      to_id:{type:ObjectId}, // 标记回复的是哪条评论或者内容
       message_type:{type:Number,default:1}  // 1:文章评论 2:博客留言 3:回复
   ```
 
