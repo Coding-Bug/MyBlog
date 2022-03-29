@@ -5,39 +5,24 @@ const article = require('../model/article');
 const users = require('../model/users');
 const message = require('../model/message')
 const { ObjectId } = require("mongodb");
+const categoty = require('../model/category')
 
+// 插入测试数据
+// const cat = [{
+//     cat_name: 'JS面试题',
+//     cat_count: 6
+// }, {
 
-// // 插入测试用例
-// let comment={
-//     author_id:ObjectId('623abcec577189cb050fb3b2'),
-//     create_time:213214324324,
-//     content:'太棒了这头母猪',
-//     like_ids:[ObjectId('623ff734cb769776f344bbaf'),ObjectId('623abcec577189cb050fb3b2')],
-//     reply_ids:[ObjectId('623ff734cb769776f344bbaf')],
-//     message_type:1 // 1:文章评论 2:博客留言 3:回复
-// }
-// let reply1={
-//     author_id:ObjectId('623ff734cb769776f344bbaf'),
-//     create_time:213214324324,
-//     content:'确实是非常棒啊!',
-//     like_ids:[ObjectId('623ff734cb769776f344bbaf'),ObjectId('623abcec577189cb050fb3b2')],
-//     reply_ids:[ObjectId('623ff760cb769776f344bbb0')],
-//     to_id:ObjectId('623abcec577189cb050fb3b2'),
-//     message_type:3 // 1:文章评论 2:博客留言 3:回复
-// }
-// let reply2 = {
-//     author_id:ObjectId('623ff760cb769776f344bbb0'),
-//     create_time:213214324324,
-//     content:'果然你也觉得棒',
-//     like_ids:[],
-//     reply_ids:[],
-//     to_id:ObjectId('623ff734cb769776f344bbaf'),
-//     message_type:3 // 1:文章评论 2:博客留言 3:回复
-// }
-// dao.insert({colName:message,data:comment})
-// dao.insert({colName:message,data:reply1})
-// dao.insert({colName:message,data:reply2})
+//     cat_name: 'CSS面试题',
+//     cat_count: 15
 
+// }, {
+//     cat_name: 'Vue面试题',
+//     cat_count: 33
+// }
+// ]
+
+// dao.insert({colName:categoty,data:cat})
 
 
 module.exports = {
@@ -58,7 +43,7 @@ module.exports = {
             } else if (tag) {
                 where = { tag: { $elemMatch: { $eq: tag } } }
             } else if (category) {
-                where = { category: { $elemMatch: { $eq: category } } }
+                where = { categorise: { $elemMatch: { $eq: category } } }
             }
             // 分页条件
             let setting = { limit: pageSize, skip: (page - 1) * pageSize }
@@ -68,6 +53,7 @@ module.exports = {
             let data = []
             if (count != 0) {
                 data = await dao.find({ colName: article, where, setting })
+              
             }
             // 返回数据
             // console.log('开始返回数据')
@@ -144,39 +130,88 @@ module.exports = {
 
     },
 
- 
+
 
     // 给文章点赞
-    async likeArticle(req,res,next){
-        try{
-            let {article_id} = req.body
+    async likeArticle(req, res, next) {
+        try {
+            let { article_id } = req.body
             let user_id = req.info._id
             // 查看该用户是否已经为文章点赞
-            let data =await dao.find({colName:article,where:{article_id,like_ids: { $elemMatch: { $eq: user_id }}}})
-            
+            let data = await dao.find({ colName: article, where: { article_id, like_ids: { $elemMatch: { $eq: user_id } } } })
+
             // 如果已经点赞，则更新为未点赞并设置flag为false标识
-            if(data.length!=0){
+            if (data.length != 0) {
                 // 从点赞中删除该用户
-                await dao.update({colName:article,where:{article_id},newdata:{"$pull":{"like_ids":user_id}}})
+                await dao.update({ colName: article, where: { article_id }, newdata: { "$pull": { "like_ids": user_id } } })
                 res.send({
-                    code:200,
-                    msg:'取消点赞',
-                    flag:false
+                    code: 200,
+                    msg: '取消点赞',
+                    flag: false
                 })
 
-            }else{
+            } else {
                 // 从点赞中添加该用户
-                await dao.update({colName:article,where:{article_id},newdata:{"$push":{"like_ids":user_id}}})
+                await dao.update({ colName: article, where: { article_id }, newdata: { "$push": { "like_ids": user_id } } })
                 res.send({
-                    code:200,
-                    msg:'点赞',
-                    flag:true
+                    code: 200,
+                    msg: '点赞',
+                    flag: true
                 })
             }
 
-        }catch(err){
+        } catch (err) {
+            next(err)
+        }
+    },
+
+    // 获取文章归档
+    async getArchive(req, res, next) {
+        try {
+            let data = await dao.find({ colName: article })
+            let count = data.length
+            let resdata = []
+            for (let i = 0; i < data.length; ++i) {
+                let tmp = {}
+                tmp.article_id = data[i]._id
+                tmp.createTime = data[i].create_time
+                tmp.title = data[i].title
+                resdata.push(tmp)
+            }
+            res.send({
+                code: 200,
+                mas: '获取归档成功',
+                count,
+                data: resdata
+            })
+        } catch (err) {
+            next(err)
+        }
+    },
+
+    // 获取所有分类
+    async getCategory(req, res, next) {
+        try {
+            let resdata = []
+            let data = await dao.find({ colName: categoty })
+            for (let i = 0; i < data.length; ++i) {
+                let tmp = {}
+                tmp.category_id = data[i]._id
+                tmp.cat_name = data[i].cat_name
+                tmp.cat_num = data[i].cat_count
+                resdata.push(tmp)
+            }
+
+            res.send({
+                code: 200,
+                msg: '获取标签成功',
+                data: resdata
+            })
+
+
+
+        } catch (err) {
             next(err)
         }
     }
-
 }

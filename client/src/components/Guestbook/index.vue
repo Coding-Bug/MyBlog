@@ -245,6 +245,7 @@ export default {
   },
   deactivated() {
     deleteScollEvent(); // 失活时注销
+    this.$destroy(this)
   },
   computed: {
     ...mapGetters("user", ["userInfo", "token"]),
@@ -253,12 +254,6 @@ export default {
     },
     publishOrReply() {
       return throttle(this.handlePublishOrReply, 1000);
-    },
-  },
-  watch: {
-    article_id() {
-      this.page = 1;
-      this.getComments();
     },
   },
   methods: {
@@ -282,12 +277,14 @@ export default {
         // 取消正在加载
         if (this.page * this.pageSize >= this.count) {
           setTimeout((this.showFoot = true));
-        }
-        this.$nextTick(function () {
+        }else{
+          this.$nextTick(function () {
           if (document.body.scrollHeight <= window.innerHeight) {
             this.handleScroll();
           }
         });
+        }
+        
       } catch (err) {
         this.$message.error(err);
         setTimeout((this.showFoot = true));
@@ -295,6 +292,7 @@ export default {
     },
     // 加载吓一页评论
     handleScroll() {
+      console.log(this.count,this.page)
       if (this.page * this.pageSize >= this.count) {
         return;
       }

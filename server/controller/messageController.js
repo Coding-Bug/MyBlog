@@ -59,12 +59,16 @@ module.exports = {
                         let reply = await dao.find({ colName: message, where: { _id: id } })
 
                         reply = reply[0]
+                        console.log(reply)
 
                         // 获取回复者
                         let replyer = await dao.find({ colName: users, where: { _id: reply.author_id } })
-
+                                
                         // 获取回复对象信息
+                        console.log('****************')
+                        console.log(reply.to_id)
                         let reply_to = await dao.find({ colName: message, where: { _id: reply.to_id } })
+                        console.log(reply_to)
                         let reply_to_aut = await dao.find({ colName: users, where: { _id: reply_to[0].author_id } })
 
 
@@ -83,7 +87,6 @@ module.exports = {
                 }
 
             }
-            // console.log(message_set)
             res.send({
                 code: 200,
                 msg: '获取评论成功',
@@ -189,7 +192,6 @@ module.exports = {
                     newdata.message_type = 2
                     data = await dao.insert({ colName: message, data: newdata })
                 }
-
                 // 返回评论数据
                 redata.message_id = data[0]._id
                 redata.avatar = config.baseURL + aut[0].avatar
