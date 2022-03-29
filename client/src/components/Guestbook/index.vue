@@ -39,7 +39,7 @@
                 <span
                   v-if="item.author === $store.state.user.admin"
                   class="admin_name"
-                  >站长</span
+                  ><span style="color:#1E90FF">站长</span></span
                 >
                 <span class="date">{{ item.create_time | formateDate }}</span>
               </div>
@@ -152,11 +152,7 @@
                       maxlength="200"
                       :placeholder="reply_placeholder"
                       @keydown.enter.native="
-                        publishOrReply(
-                          $event,
-                          item,
-                          subItem.reply_id
-                        )
+                        publishOrReply($event, item, subItem.reply_id)
                       "
                       :rows="3"
                       type="textarea"
@@ -287,6 +283,11 @@ export default {
         if (this.page * this.pageSize >= this.count) {
           setTimeout((this.showFoot = true));
         }
+        this.$nextTick(function () {
+          if (document.body.scrollHeight <= window.innerHeight) {
+            this.handleScroll();
+          }
+        });
       } catch (err) {
         this.$message.error(err);
         setTimeout((this.showFoot = true));
@@ -311,13 +312,20 @@ export default {
       if (e.ctrlKey && e.keyCode == 13) {
         // 判断有没有token
         if (this.token) {
-
           // 如果是回复
           if (message) {
+            if (this.reply_value == "") {
+              this.$message.error("评论内容不能为空哇(^▽^ )");
+              return;
+            }
             this.params.content = this.reply_value; // 评论内容
-            this.params.message_id = message.message_id
-            this.params.to_id = to_id
+            this.params.message_id = message.message_id;
+            this.params.to_id = to_id;
           } else {
+            if (this.value == "") {
+              this.$message.error("评论内容不能为空哇(^▽^ )");
+              return;
+            }
             this.params.content = this.value;
           }
           // 如果是评论,将文章id一起传过去
@@ -335,14 +343,13 @@ export default {
               this.value = "";
 
               // 处理评论的前端更新问题
-              if(this.page*this.pageSize>=this.count){
-                this.comments.push(res.data)
+              if (this.page * this.pageSize >= this.count) {
+                this.comments.push(res.data);
               }
-
-            }else{  // 如果是回复，直接将该回复插入该评论中
-              message.replyAcess.push(res.data)
+            } else {
+              // 如果是回复，直接将该回复插入该评论中
+              message.replyAcess.push(res.data);
             }
-            
           } catch (err) {
             this.$message.error(err);
           }
@@ -359,11 +366,11 @@ export default {
       this.resetShow();
       // 如果是打开回复楼主的输入框
       if (comment && subComment) {
-        this.reply_placeholder = `回复${subComment.name}    (Enter换行,Ctrl+Enter发送,Esc取消)`;
+        this.reply_placeholder = `回复${subComment.author}    (Enter换行,Ctrl+Enter发送,Esc取消)`;
         this.show.comment_id = comment.message_id;
         this.show.subComment_id = subComment.reply_id;
       } else {
-        this.reply_placeholder = `回复${comment.name}  (Enter换行,Ctrl+Enter发送，Esc取消)`;
+        this.reply_placeholder = `回复${comment.author}  (Enter换行,Ctrl+Enter发送，Esc取消)`;
         this.show.comment_id = comment.message_id;
       }
       // 使其获取焦点

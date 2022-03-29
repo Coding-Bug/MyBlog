@@ -14,10 +14,9 @@ let scollMore = function (fun) {
     document.body.scrollHeight,
     document.documentElement.scrollHeight
   ); // 页面的总高度
-  console.log(scrollY, vh, allHeight);
+  
   // 向上取整，不然有可能拉不出来
   if (Math.ceil(scrollY + vh) >= allHeight) {
-    console.log("bbb");
     fun();
   }
 };
