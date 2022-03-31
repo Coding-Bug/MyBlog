@@ -70,9 +70,6 @@
 <script>
 export default {
   name: "LAside",
-  methods: {
-    goAdmin() {},
-  },
   data() {
     return {
       routePath: "0",
@@ -83,6 +80,7 @@ export default {
         "tag",
         "message",
         "profile",
+        "admin",
       ],
     };
   },
@@ -97,6 +95,12 @@ export default {
       }
     },
   },
+  methods:{
+    goAdmin(){
+      // 跳转到管理员页面
+      this.$router.push('/admin')
+    }
+  }
 };
 </script>
 

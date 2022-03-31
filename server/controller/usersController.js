@@ -296,7 +296,7 @@ module.exports = {
    * 修改用户信息
    */
 
-  async changeUserInfo(req, res) {
+  async changeUserInfo(req, res,next) {
 
     try {
       // 创建表单解析对象
@@ -338,8 +338,35 @@ module.exports = {
       })
 
     } catch (err) {
-      console.log(err)
-
+      next(err)
     }
+  },
+
+  /**
+   * @method 判断用户是否管理员
+   */
+
+  async isAdmin(req,res,next){
+    try{
+      
+      let data = await dao.find({colName:users,where:{_id:req.info._id}})
+      if(data.length!=0){
+        if(data[0].roleType===2){
+          res.send({
+            code:200,
+            msg:'是管理员大大',
+            flag:true
+          })
+        }
+        res.send({
+          code:200,
+          msg:'不是管理员',
+          flag:false
+        })
+      }
+    }catch(err){
+      next(err)
+    }
+
   }
 }

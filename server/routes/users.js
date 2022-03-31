@@ -13,5 +13,6 @@ router.post('/register',users.userRgester)
 router.post('/resetPassword',users.resetPassword)
 router.post('/changeInfo',users.changeUserInfo)
 router.get('/getInfo',users.getUserInfo)
+router.get('/isAdmin',users.isAdmin)
 
 module.exports = router;

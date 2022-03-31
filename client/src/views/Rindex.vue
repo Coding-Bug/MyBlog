@@ -25,6 +25,13 @@
         </div>
       </div>
     </div>
+
+    <!-- 处理管理系统 -->
+    <div class="admin-container" v-if="isAdmin">
+      <!-- 背景 -->
+      <div class="day"></div>  
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 
@@ -74,6 +81,7 @@ export default {
           this.showSome=false
         }
       }
+
   },
 
   mounted() {
@@ -89,6 +97,9 @@ export default {
         self.$refs.main.style.marginLeft = "0";
       }
     });
+    this.$Bus.$on('setAdminState',function(val){
+      self.isAdmin = val
+    })
 
     // 监听窗口变化
     window.onresize=function(){
@@ -110,7 +121,7 @@ export default {
   display: flex;
   flex-direction: column;
   width: 100%;
-
+  height: 100%;
   // 背景
   .day,
   .night {
@@ -127,6 +138,10 @@ export default {
   .day {
     background: url("../assets/images/day.jpg") no-repeat;
     background-size: 100% 100%;
+  }
+  .admin-container{
+    height: 100%;
+    width: 100%;
   }
 }
 

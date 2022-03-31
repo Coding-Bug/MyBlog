@@ -42,3 +42,8 @@ export const getUserInfo  = ()=>get('/users/getInfo')
  */
 
 export const changeUserInfo=(params)=>post('/users/changeInfo',params)
+
+/**
+ * @method  向后端请求判断是否管理员
+ */
+ export const isAdmin = ()=>get('/users/isAdmin')

@@ -23,6 +23,10 @@ export default {
 </script>
 
 <style lang='scss'>
+
+#app{
+  height: 100%;
+}
 // 画布大小
 #Snow{
   position: fixed;

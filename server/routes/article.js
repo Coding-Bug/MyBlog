@@ -9,4 +9,4 @@ router.post('/likeArticle',article.likeArticle)
 router.get('/getArchive',article.getArchive)
 router.get('/getCategory',article.getCategory)
 router.get('/getTag',article.getTag)
-module.exports=router
+module.exports = router
