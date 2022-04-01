@@ -1,6 +1,6 @@
 <template>
   <div id = 'Message'>
-  <Guestbook :isComment="false" ></Guestbook>
+  <Guestbook :isComment="false" ref="GuestBook"></Guestbook>
   </div>
 </template>
 
@@ -10,6 +10,9 @@ export default {
   name:'Message',
   components:{
       Guestbook
+  },
+  deactivated(){
+    this.$destroy(this.$refs.Guestbook)
   }
 }
 </script>

@@ -7,39 +7,11 @@ const message = require('../model/message')
 const { ObjectId } = require("mongodb");
 const categoty = require('../model/category')
 const tag = require('../model/tag')
-// 插入测试数据
-// const cat = [{
-//     cat_name: 'JS面试题',
-//     cat_count: 6
-// }, {
+const formidable = require('formidable')
+const { insertTag, insertCat } = require('../util/insertTagorCat')
+const fs = require('fs')
+const path = require('path')
 
-//     cat_name: 'CSS面试题',
-//     cat_count: 15
-
-// }, {
-//     cat_name: 'Vue面试题',
-//     cat_count: 33
-// }
-// ]
-
-// dao.insert({colName:categoty,data:cat})
-
-// 插入测试标签
-// const ntag = [{
-//     tag_name: 'ES6',
-//     tag_count: 6
-// }, {
-
-//     tag_name: '性能优化',
-//     tag_count: 15
-
-// }, {
-//     tag_name: 'diff算法',
-//     tag_count: 33
-// }
-// ]
-
-// dao.insert({colName:tag,data:ntag})
 
 module.exports = {
     // 用户查询文章列表操作
@@ -62,14 +34,14 @@ module.exports = {
                 where = { categorise: { $elemMatch: { $eq: category } } }
             }
             // 分页条件
-            let setting = { limit: pageSize, skip: (page - 1) * pageSize }
+            let setting = { limit: pageSize, skip: (page - 1) * pageSize, sort: { create_time: -1 } }
 
             // 获取文章总数
             let count = await dao.count({ colName: article, where })
             let data = []
             if (count != 0) {
                 data = await dao.find({ colName: article, where, setting })
-              
+
             }
             // 返回数据
             let resData = []
@@ -117,12 +89,12 @@ module.exports = {
         try {
             const { article_id } = req.query
             // 增加该文章的点击量
-            await dao.update({ colName: article, where: { article }, newdata: { $inc: { visited: 1 } } })
+            await dao.update({ colName: article, where: { _id: article_id }, newdata: { $inc: { visited: 1 } } })
 
 
             // 获取该文章
             // 直接返回该文章，让前端自行处理
-            let data = await dao.find({ colName: article, where: { article_id } })
+            let data = await dao.find({ colName: article, where: { _id: article_id } })
             if (data.length != 0) {
                 // 获取作者
                 data = data[0]
@@ -230,11 +202,11 @@ module.exports = {
     },
 
     // 获取所有标签
-    async getTag(req,res,next){
-        try{
-            let resdata=[]
-            let data = await dao.find({colName:tag})
-            for(let i = 0;i<data.length;++i){
+    async getTag(req, res, next) {
+        try {
+            let resdata = []
+            let data = await dao.find({ colName: tag })
+            for (let i = 0; i < data.length; ++i) {
                 let tmp = {}
                 tmp.tag_id = data[i]._id
                 tmp.tag_name = data[i].tag_name
@@ -242,13 +214,91 @@ module.exports = {
                 resdata.push(tmp)
             }
             res.send({
-                code:200,
-                msg:'获取标签成功',
-                data:resdata
+                code: 200,
+                msg: '获取标签成功',
+                data: resdata
             })
 
-        }catch(err){
+        } catch (err) {
             next(err)
         }
-    }
+    },
+
+    // 发布文章
+    async publishArticle(req, res, next) {
+        try {
+            // 创建表单对象解析表单
+            const form = new formidable.IncomingForm()
+            // 配置文件上传路径
+            let coverPath = path.join(__dirname, '../public/images/article')
+            form.uploadDir = coverPath
+            // 保留文件拓展名
+            form.keepExtensions = true
+
+            // 解析表单
+            form.parse(req, async (err, fields, files) => {
+                if (err) {
+                    throw (err)
+                }
+                // 要插入的对象
+                let data = {}
+                data.title = fields.title
+                data.brief = fields.brief
+                data.content = fields.content
+                data.author_id = req.info._id
+                data.createTime = (new Date()).getTime()
+                // 处理标签和分类
+                data.tags = []
+                if (fields.tag1 != "") {
+                    data.tags.push(fields.tag1)
+                    await insertTag(fields.tag1)
+
+                }
+                if (fields.tag2 != "") {
+                    data.tags.push(fields.tag2)
+                    await insertTag(fields.tag2)
+                }
+                if (fields.tag3 != "") {
+                    data.tags.push(fields.tag3)
+                    await insertTag(fields.tag3)
+                }
+                if (fields.category != "") {
+                    data.categorise = [fields.category]
+                    await insertCat(fields.category)
+                }
+
+
+                // 将数据先插入数据库中
+                data = await dao.insert({ colName: article, data})
+                data = data[0]
+
+                // 如果有上传封面
+                if (files.cover) {
+                    let oldPath = files.cover.path
+                    let newPath = coverPath + '/' + data._id + '.jpg'
+                    console.log(oldPath,newPath)
+                    fs.rename(oldPath, newPath, async (err) => {
+                        if (err) {
+                            throw (err)
+                        }
+                        // 将照片路径保存到数据库中
+                        await dao.update({ colName: article, where: { _id: data._id }, newdata: { cover: newPath.split('public')[1] } })
+                    })
+
+                } else {
+                    // 如果没有封面，将默认文章封面路径存到数据库
+                    await dao.update({ colName: article, where: { _id: data._id }, newdata: { cover: config.defaultCover } })
+                }
+
+                res.send({
+                    code: 200,
+                    msg: '文章发布成功'
+                })
+
+            })
+
+        } catch (err) {
+            next(err)
+        }
+    },
 }

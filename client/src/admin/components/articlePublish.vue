@@ -64,7 +64,7 @@ import {debounce} from '@/utils/debounce'
 export default {
   name: "articlePublish",
   data() {
-    return {
+    return { 
       article: {
         title: "",
         brief: "",
@@ -90,7 +90,7 @@ export default {
       this.coverList.pop()
     },
     handleSubmit (){
-      return debounce(submit,300)
+      return debounce(this.submit,300)
     },
     async submit(){
       // 转化成formdata的格式

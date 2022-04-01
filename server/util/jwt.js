@@ -10,7 +10,7 @@ exports.setToken = function (username, userid) {
         _id: userid,
       },
       singkey,
-      { expiresIn: "5h" }
+      { expiresIn: "10h" }
     );
     resolve(token);
   });
@@ -21,7 +21,5 @@ exports.verifyToken = function (token) {
   return new Promise((resolve, reject) => {
         let info = jwt.verify(token, singkey);
         resolve(info);
-      
-   
   });
 };

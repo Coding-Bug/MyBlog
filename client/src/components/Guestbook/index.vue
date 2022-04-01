@@ -232,20 +232,17 @@ export default {
     };
   },
   mounted() {
+    // 绑定滚动条到底部的事件
+    addScollEvent(this.handleScroll, 1000);
     // 绑定聚焦搜索框事件
     this.getComments();
     this.$Bus.$on("focusComment", () => {
       this.$refs.messageInput.focus();
     });
   },
-
-  activated() {
-    // 绑定滚动条到底部的事件
-    addScollEvent(this.handleScroll, 1000);
-  },
-  deactivated() {
+  beforeDestroy(){
     deleteScollEvent(); // 失活时注销
-    this.$destroy(this)
+
   },
   computed: {
     ...mapGetters("user", ["userInfo", "token"]),

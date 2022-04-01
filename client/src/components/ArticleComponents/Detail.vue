@@ -41,7 +41,7 @@
     </div>
 
     <!-- 评论区域 -->
-    <Guestbook :article_id="$route.params.id"></Guestbook>
+    <Guestbook :article_id="$route.params.id" ref="GuestBook"></Guestbook>
 
     <!-- 右下角的返回顶部部分 -->
     <BackTop
@@ -84,6 +84,10 @@ export default {
         this.getDetail();
       }
     },
+  },
+  deactivated() {
+    // 将留言板删除
+    this.$destroy(this.$refs.GuestBook)
   },
   mounted() {
     this.getDetail()

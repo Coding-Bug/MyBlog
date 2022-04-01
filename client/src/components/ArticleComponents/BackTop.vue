@@ -54,7 +54,7 @@ export default {
   },
   computed: {
     haveLike() {
-      console.log('计算')
+    
       if (this.userInfo) {
         if (this.like_userid.indexOf(this.userInfo.id) != -1) {
           return true;

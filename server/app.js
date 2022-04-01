@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const bodyParser = require('body-parser')
 const {verify} = require('./middleware/verify')
+const verifyAdmin = require('./middleware/verifyAdmin')
 const config = require('./config/config.default')
 // 引入路由文件
 var indexRouter = require('./routes/index');
@@ -13,6 +14,7 @@ var usersRouter = require('./routes/users');
 let articleRouter = require('./routes/article')
 let messagerouter = require('./routes/message')
 let aboutRouter = require('./routes/about')
+let adminRouter = require('./routes/admin')
 var app = express();
 // 配置
 app.all('*', function (req, res, next) {
@@ -44,6 +46,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true})) 
 app.use(config.tokenPath,verify) // 配置需要验证token的中间件
+app.use(config.adminPath,verifyAdmin)   // 需要验证管理员的请求
 // 定义public为静态资源目录
 app.use(express.static(path.join(__dirname, 'public')));
   
@@ -53,6 +56,7 @@ app.use('/users', usersRouter);
 app.use('/article',articleRouter);
 app.use('/message',messagerouter)
 app.use('/about',aboutRouter)
+app.use('/admin',adminRouter)
 // catch 404 and forward to error handler
 // app.use(function(req, res, next) {
 //   next(createError(404));
