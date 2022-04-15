@@ -2,6 +2,7 @@
 node_modules
 /dist
 /src/static
+*.md
 
 
 # local env files

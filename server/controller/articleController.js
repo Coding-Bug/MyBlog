@@ -17,22 +17,21 @@ module.exports = {
     // 用户查询文章列表操作
     async getArticle(req, res, next) {
         try {
-
-
-            let { page, pageSize, seacher, tag, category } = req.query
+            let { page, pageSize, search, tag, category } = req.query
             page = parseInt(page)
             pageSize = parseInt(pageSize)
-
             // 构造查询条件
-            let where
-            if (seacher) {
+            let where ={}
+            if (search) {
                 // 正则查询
-                where = { search: { $elemMatch: { $regex: seacher } } }
+                where = { title:  {$regex: search } }
             } else if (tag) {
                 where = { tags: { $elemMatch: { $eq: tag } } }
             } else if (category) {
                 where = { categorise: { $elemMatch: { $eq: category } } }
             }
+            // 获取的是发布了的文章
+            where.status = true
             // 分页条件
             let setting = { limit: pageSize, skip: (page - 1) * pageSize, sort: { create_time: -1 } }
 
@@ -48,13 +47,9 @@ module.exports = {
             for (let i = 0; i < data.length; ++i) {
                 // 获取作者
                 let elem = data[i]
-                // console.log(elem)
                 let aut = await users.find({ colName: users, where: { _id: elem.author_id } })
-                // console.log(aut)
                 let author = aut[0].username
                 let avatar = config.baseURL + aut[0].avatar
-                // console.log(author,avatar)
-                // console.log(elem)
                 resData.push({
                     article_id: elem._id,
                     cover: config.baseURL + elem.cover,
@@ -115,8 +110,6 @@ module.exports = {
         }
 
     },
-
-
 
     // 给文章点赞
     async likeArticle(req, res, next) {
@@ -243,6 +236,7 @@ module.exports = {
                 // 要插入的对象
                 let data = {}
                 data.title = fields.title
+                data.status = true
                 data.brief = fields.brief
                 data.content = fields.content
                 data.author_id = req.info._id
@@ -301,4 +295,42 @@ module.exports = {
             next(err)
         }
     },
+
+    // 管理员获取文章列表
+    async getAdminArticle(req,res,next){
+        try {
+            let { page, pageSize, search} = req.query
+            page = parseInt(page)
+            pageSize = parseInt(pageSize)
+            // 构造查询条件
+            let where ={}
+            if (search) {
+                // 正则查询
+                where = { title: { $regex: search } }
+            }
+            // 分页条件
+            let setting = { limit: pageSize, skip: (page - 1) * pageSize, sort: { create_time: -1 } }
+
+            // 获取文章总数
+            let count = await dao.count({ colName: article, where })
+            let data = []
+            if (count != 0) {
+                data = await dao.find({ colName: article, where, setting })
+                data.forEach((val,index,data)=>{
+                    
+                    data[index].cover = config.baseURL+data[index].cover
+                })
+            }
+            res.send({
+                code: 200,
+                msg: '获取文章列表成功',
+                count,
+                data
+            })
+        } catch (err) {
+            next(err)
+        }
+
+
+    }
 }

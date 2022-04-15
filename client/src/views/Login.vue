@@ -4,7 +4,7 @@
       <el-form-item prop="username" v-show="status != 2">
         <el-input
           v-model="userInfo.username"
-          placeholder="请输入用户名或邮箱"
+          :placeholder="status==0?'请输入用户名或邮箱':'请输入用户名'"
           prefix-icon="el-icon-user-solid"
         >
         </el-input>

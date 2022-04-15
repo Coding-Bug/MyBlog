@@ -46,7 +46,10 @@ import{
   Form,
   FormItem,
   Upload,
-  Submenu
+  Submenu,
+  Table,
+  TableColumn,
+  Switch
 }from'element-ui'
 
 Vue.use(Row)
@@ -65,6 +68,9 @@ Vue.use(Form)
 Vue.use(FormItem)
 Vue.use(Upload)
 Vue.use(Submenu)
+Vue.use(Table)
+Vue.use(TableColumn)
+Vue.use(Switch)
 // 引入Mesage和MessageBox中提交信息和确定的box
 Vue.prototype.$message = Message
 Vue.prototype.$prompt = MessageBox.prompt

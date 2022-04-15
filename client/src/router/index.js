@@ -60,6 +60,11 @@ const routes = [
         name:'publishArticle',
         component:()=>import('@/admin/components/articlePublish')
       },
+      {
+        path:'manageArticle',
+        name:'manageArticle',
+        component:()=>import('@/admin/components/articleManage')
+      }
     ]
   }
 ];

@@ -22,6 +22,7 @@ module.exports = {
     const { username, password } = req.body;
     try {
       let data = await dao.find({ colName: users, where: { $or: [{ username }, { email: username }] } });
+      console.log(data)
       // 用户名不存在
       if (data.length == 0) {
         next({
@@ -58,7 +59,6 @@ module.exports = {
             data: {},
           }
         })
-        return
       }
       // 登录成功
       // 生成token
@@ -357,12 +357,14 @@ module.exports = {
             msg:'是管理员大大',
             flag:true
           })
+        }else{
+          res.send({
+            code:200,
+            msg:'不是管理员',
+            flag:false
+          })
         }
-        res.send({
-          code:200,
-          msg:'不是管理员',
-          flag:false
-        })
+        
       }
     }catch(err){
       next(err)

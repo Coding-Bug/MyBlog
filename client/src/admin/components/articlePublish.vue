@@ -124,7 +124,7 @@ export default {
     }
     .tag {
       .el-input {
-        width: 100px;
+        width: 130px;
         font-size: 16px;
         margin-right: 20px;
         .el-input__inner {
@@ -135,8 +135,10 @@ export default {
     .cover {
       .el-upload-list--picture {
         .el-upload-list__item-thumbnail{
-            width: 100%;
-            height: 100%;
+            min-width: 600px;
+            min-height: 300px;
+            max-width: 600px;
+            max-height: 300px;
             margin: 0;
         }
         .el-upload-list__item {

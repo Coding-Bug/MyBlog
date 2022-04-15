@@ -19,7 +19,6 @@ export default {
     methods:{
         emitToArticle(){
             this.$Bus.$emit('eventFromSearch',this.searchValue) 
-            this.searchValue=''  
         }
     }
 }

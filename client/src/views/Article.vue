@@ -133,8 +133,6 @@ export default {
   mounted() {
     // 加载完毕的时候
     this.getList();
-  },
-  beforeUpdate() {
     const self = this;
     // 绑定从所搜组件传过来的事件
     this.$Bus.$on("eventFromSearch", function (val) {

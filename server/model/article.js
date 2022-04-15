@@ -15,5 +15,6 @@ const schema = new Schema({
     visited:{type:Number,default:0}, // 访问量
     tags:{type:Array,default:[]}, // 标签
     categorise:{type:Array,default:[]}, // 分类
+    status:{type:Boolean,defaul:true} // 发布状态
 })
 module.exports = mongoose.model('article',schema)

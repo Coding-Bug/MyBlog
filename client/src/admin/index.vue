@@ -12,8 +12,8 @@
             <i class="el-icon-menu"></i>
             <span>文章管理</span>
           </template>
-            <el-menu-item index="1-1">发布文章</el-menu-item>
-            <el-menu-item index="1-2">管理文章</el-menu-item>
+            <el-menu-item index="1-1" @click="$router.push('/admin/publishArticle')">发布文章</el-menu-item>
+            <el-menu-item index="1-2" @click="$router.push('/admin/manageArticle')">管理文章</el-menu-item>
         </el-submenu>
         <el-menu-item index="2">
           <i class="el-icon-user"></i>
@@ -25,7 +25,6 @@
     <!-- 内容区域 -->
     <div class="right">
       <router-view></router-view>
-
     </div>
     
   </div>
@@ -35,9 +34,7 @@
 export default {
   name: "admin",
   methods:{
-    handleOpen(){
-      console.log('aaa')
-    }
+    
   }
 };
 </script>
